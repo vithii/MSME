@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Project Madonna</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="dashboard">
+    <nav class="navbar">
+      <div class="nav-brand">Project Madonna</div>
+      <a href="/api/logout" class="logout-btn">Sign out</a>
+    </nav>
+    <main class="content">
+      <div class="profile-card">
+        <img id="avatar" src="" alt="Profile" class="avatar" />
+        <h2 id="name">Loading...</h2>
+        <p id="email" class="email"></p>
+        <div class="badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          Signed in with Gmail
+        </div>
+      </div>
+      <div class="info-card">
+        <h3>Welcome back!</h3>
+        <p>Your Gmail account has been successfully authenticated. You can now access all features.</p>
+      </div>
+    </main>
+  </div>
+  <script src="/js/app.js"></script>
+</body>
+</html>
