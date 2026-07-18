@@ -384,6 +384,45 @@ section {
         gap: 16px;
         padding-top: 40px;
     }
+    
+    /* Public Layout Mobile Overrides */
+    .navbar {
+        padding: 16px 0;
+    }
+    .navbar .container {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .nav-links {
+        gap: 20px;
+    }
+    .hero {
+        padding: 100px 0 60px;
+    }
+    .hero h1 {
+        font-size: 2.2rem;
+        margin-bottom: 16px;
+    }
+    .hero p {
+        font-size: 1rem;
+        margin-bottom: 24px;
+    }
+    section {
+        padding: 60px 0;
+    }
+    .section-header {
+        margin-bottom: 40px;
+    }
+    .section-header h2 {
+        font-size: 1.8rem;
+        margin-bottom: 12px;
+    }
+    .card {
+        padding: 24px 20px;
+    }
+    .grid-3 {
+        gap: 20px;
+    }
 }
 
 /* Toast Notifications */
