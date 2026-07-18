@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const navProgressBar = document.getElementById('nav-progress-bar');
     const navStatusText = document.getElementById('nav-status');
 
+    // Dynamically set course title from ebookData
+    if (navStatusText && typeof ebookData !== 'undefined' && ebookData.title) {
+        navStatusText.innerText = ebookData.title;
+        document.title = `${ebookData.title} | MSMEgrowth`;
+    }
+
     // Utility: Update overall progress UI
     function updateProgressUI() {
         let completed = 0;

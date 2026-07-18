@@ -450,3 +450,10 @@ section {
 @keyframes spin {
     to { transform: rotate(360deg); }
 }
+
+/* Authentication Page Load Protection */
+.auth-loading {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.3s ease;
+}

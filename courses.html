@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Course Library | MSMEgrowth</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <style>
@@ -118,7 +121,7 @@
 </head>
 <body>
 
-    <div class="dashboard-layout">
+    <div class="dashboard-layout auth-loading" id="dashboard-layout">
         
         <!-- Sidebar Navigation -->
         <aside class="sidebar">
@@ -192,6 +195,8 @@
 
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
+                const layout = document.getElementById('dashboard-layout');
+                if (layout) layout.classList.remove('auth-loading');
                 if (typeof hideAuthLoader === 'function') hideAuthLoader();
                 try {
                     const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
