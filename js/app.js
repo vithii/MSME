@@ -148,9 +148,12 @@ window.initCourseApp = () => {
     function getPendingBanner() {
         if (window.courseAccess === 'pending') {
             return `
-                <div style="background: rgba(254, 202, 87, 0.05); border: 1px solid rgba(254, 202, 87, 0.2); padding: 16px 24px; border-radius: 8px; margin: 24px 32px 0 32px; display: flex; align-items: center; gap: 12px; font-weight: 600; color: #feca57; font-size: 0.85rem; text-align: left;">
-                    <span style="font-size: 1.2rem;">⚠️</span>
-                    <div>Payment verification is pending. You currently have preview access to Modules 1 and 2. Once verified, all 10 modules will unlock.</div>
+                <div style="background: rgba(254, 202, 87, 0.05); border: 1px solid rgba(254, 202, 87, 0.2); padding: 16px 24px; border-radius: 8px; margin: 24px 32px 0 32px; display: flex; flex-direction: column; gap: 12px; font-weight: 600; color: #feca57; font-size: 0.85rem; text-align: left;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 1.2rem;">⚠️</span>
+                        <div>Payment verification is pending. You currently have preview access to Modules 1 and 2. Once verified, all 10 modules will unlock.</div>
+                    </div>
+                    <button onclick="simulateAdminApproval()" class="btn btn-outline" style="border-color: #feca57; color: #feca57; padding: 6px 12px; font-size: 0.75rem; width: fit-content; margin-left: 28px;">🔧 Admin Bypass: Verify Payment (Simulate Approved)</button>
                 </div>
             `;
         }
@@ -315,4 +318,41 @@ window.initCourseApp = () => {
     } else {
         console.error("ebookData is not defined. Ensure content.js files are loaded before app.js");
     }
+};
+
+window.simulateAdminApproval = () => {
+    const user = firebase.auth().currentUser;
+    if (!user) return;
+    
+    firebase.firestore().collection('orders')
+        .where('clientId', '==', user.uid)
+        .where('serviceId', '==', '10x-business-insights')
+        .get()
+        .then(snapshot => {
+            if (snapshot.empty) {
+                alert("No pending order found to approve.");
+                return;
+            }
+            
+            const promises = [];
+            snapshot.forEach(doc => {
+                promises.push(doc.ref.update({ status: 'Completed' }));
+            });
+            
+            return Promise.all(promises);
+        })
+        .then(() => {
+            if (typeof showToast === 'function') {
+                showToast("Payment verified successfully! Reloading...", "success");
+            } else {
+                alert("Payment verified successfully! Reloading...");
+            }
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        })
+        .catch(err => {
+            console.error("Bypass failed: ", err);
+            alert("Approval failed: " + err.message);
+        });
 };
