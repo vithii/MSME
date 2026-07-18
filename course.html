@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass Player | MSMEgrowth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            overflow: hidden; /* App takes full height */
+        }
+        
+        .app-layout {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 350px;
+            height: 100vh;
+            background: rgba(10, 14, 23, 0.95);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            overflow-y: auto;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Nav inside Sidebar */
+        .sidebar-header {
+            padding: 32px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Main View Styling */
+        .main-view {
+            flex-grow: 1;
+            height: 100vh;
+            overflow-y: auto;
+            position: relative;
+            background: var(--bg-dark);
+        }
+
+        /* Top Bar */
+        .top-bar {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            background: rgba(10, 14, 23, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2); 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1); 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.2); 
+        }
+        
+        /* Mobile Toggle */
+        .mobile-toggle {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                z-index: 100;
+                transition: left 0.3s ease;
+            }
+            .sidebar.active {
+                left: 0;
+            }
+            .mobile-toggle {
+                display: block;
+                background: none;
+                border: none;
+                color: white;
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar-container">
+            <div class="sidebar-header">
+                <a href="index.html" class="nav-logo" style="font-size: 1.2rem;">MSME<span style="color: var(--primary);">growth</span></a>
+                <div style="margin-top: 24px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">
+                        <span>Overall Progress</span>
+                        <span id="nav-percentage" style="color: var(--secondary);">0%</span>
+                    </div>
+                    <div style="width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                        <div id="nav-progress-bar" style="height: 100%; width: 0%; background: var(--gradient-brand); transition: width 0.5s ease;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="sidebar-root" style="flex-grow: 1;">
+                <!-- App.js renders modules here -->
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-view">
+            <div class="top-bar">
+                <button class="mobile-toggle" onclick="document.getElementById('sidebar-container').classList.toggle('active')">☰</button>
+                <div style="font-weight: 600; color: var(--text-muted); font-size: 0.9rem;" id="nav-status">The Blueprint Masterclass</div>
+                <a href="dashboard.html" class="btn btn-outline" style="padding: 8px 20px; font-size: 0.8rem;">Exit Course</a>
+            </div>
+
+            <div id="view-root">
+                <!-- App.js renders content here -->
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Data Files (From 10x-course) -->
+    <script src="js/content.js"></script>
+    <script src="js/content_s2.js"></script>
+    <script src="js/content_s3.js"></script>
+    <script src="js/content_s4_s5.js"></script>
+    <script src="js/content_s6_s7.js"></script>
+    <script src="js/content_s8_to_s10.js"></script>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script>
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                if (typeof hideAuthLoader === 'function') hideAuthLoader();
+            }
+        });
+    </script>
+    
+    <!-- Core Application Logic -->
+    <script src="js/app.js"></script>
+
+</body>
+</html>

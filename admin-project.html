@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management Workspace | MSMEgrowth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 14, 23, 0.95);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: 0.3s;
+            margin-bottom: 8px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+        .nav-icon {
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+        }
+        .nav-item.active {
+            border-left: 3px solid var(--primary);
+            background: rgba(0, 163, 255, 0.05);
+        }
+
+        .main-view {
+            flex-grow: 1;
+            padding: 40px;
+            display: flex;
+            gap: 32px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .workspace-main {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .workspace-sidebar {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            min-width: 320px;
+        }
+
+        .panel {
+            background: rgba(15, 18, 25, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+        }
+
+        .panel-header {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.9);
+        }
+        .form-control {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-success {
+            background: var(--secondary);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 8px 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Progress Tracker Styles */
+        .progress-track {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(15, 18, 25, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        .progress-track::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 60px;
+            right: 60px;
+            height: 2px;
+            background: rgba(255,255,255,0.05);
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 2;
+            flex: 1;
+        }
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #11141d;
+            border: 2px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+        .step.active .step-circle {
+            border-color: var(--primary);
+            color: var(--primary);
+            box-shadow: 0 0 12px rgba(0, 163, 255, 0.2);
+        }
+        .step.active .step-label {
+            color: #fff;
+        }
+        .step.completed .step-circle {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            color: #000;
+        }
+        .step.completed .step-label {
+            color: var(--secondary);
+        }
+
+        /* Chat Widget */
+        .chat-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chat-msg {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        .chat-msg.user { /* Client Message (Left) */
+            background: rgba(255,255,255,0.05);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            text-align: left;
+        }
+        .chat-msg.admin { /* Admin Message (Right) */
+            background: rgba(0, 163, 255, 0.2);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+            text-align: left;
+        }
+        .chat-input {
+            display: flex;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .chat-input input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 16px;
+            color: #fff;
+        }
+        .chat-input input:focus { outline: none; }
+        .chat-input button {
+            background: transparent;
+            color: var(--primary);
+            border: none;
+            font-weight: 700;
+            padding: 0 16px;
+            cursor: pointer;
+        }
+
+        /* Status colors */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+        }
+        .status-review { background: rgba(254, 202, 87, 0.1); color: #feca57; border: 1px solid rgba(254, 202, 87, 0.3); }
+        .status-active { background: rgba(0, 163, 255, 0.1); color: var(--primary); border: 1px solid rgba(0, 163, 255, 0.3); }
+        .status-complete { background: rgba(6, 217, 160, 0.1); color: var(--secondary); border: 1px solid rgba(6, 217, 160, 0.3); }
+        .status-error { background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <a href="admin.html" class="nav-logo" style="margin-bottom: 48px; display: block;">MSME<span style="color: var(--primary);">growth</span></a>
+            
+            <nav style="flex-grow: 1;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; padding-left: 16px;">Workspace</div>
+                
+                <a href="admin.html" class="nav-item active">
+                    <span class="nav-icon" style="font-size: 1.2rem;">📂</span> Active Orders
+                </a>
+            </nav>
+
+            <a href="#" class="nav-item" style="margin-bottom: 0;" onclick="firebase.auth().signOut().then(() => window.location.href='login.html')">
+                <span class="nav-icon" style="font-size: 1.2rem;">🚪</span> Sign Out
+            </a>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-view">
+            
+            <!-- Left Workspace -->
+            <div class="workspace-main">
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px;">
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--secondary); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;" id="project-order-num">#ORD-XXXX</div>
+                        <h1 style="font-size: 2.2rem; font-weight: 800;" id="project-title">Loading Project Workspace...</h1>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Status</div>
+                        <div id="project-status-container">
+                            <span class="status-badge status-active" id="project-status">In Production</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Progress Tracker -->
+                <div class="progress-track" id="progress-tracker">
+                    <!-- Injected by JS -->
+                </div>
+
+                <!-- Requirements Details Area -->
+                <div class="panel" style="padding: 24px;">
+                    <div class="panel-header" style="margin-bottom: 16px; font-size: 1.1rem; text-align: left;">📋 Client Service Requirements</div>
+                    <div id="requirements-details-container">
+                        <!-- Injected by JS -->
+                        <div style="color: var(--text-muted); font-size: 0.9rem;">Loading requirements...</div>
+                    </div>
+                </div>
+
+                <!-- Interactive Upload Deliverables Panel -->
+                <div class="panel" id="upload-panel-container" style="padding: 32px;">
+                    <!-- Injected by JS -->
+                    <div style="color: var(--text-muted); font-size: 0.9rem;">Loading actions...</div>
+                </div>
+
+                <!-- Project History Panel -->
+                <div class="panel" style="padding: 24px;">
+                    <div class="panel-header" style="margin-bottom: 16px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                        <span>📋</span> Project Timeline & History
+                    </div>
+                    <div id="project-history-timeline" style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="color: var(--text-muted); font-size: 0.9rem;">No history recorded yet.</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Sidebar (Metadata & Chat) -->
+            <div class="workspace-sidebar">
+                
+                <div class="panel" style="padding: 24px;">
+                    <div class="panel-header" style="margin-bottom: 16px; font-size: 1rem;">Project Details</div>
+                    <div style="margin-bottom: 12px; display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">Estimated Delivery</span>
+                        <span style="font-weight: 600; color: #fff; font-size: 0.85rem;" id="project-eta">-</span>
+                    </div>
+                    <div style="margin-bottom: 12px; display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">Package Tier</span>
+                        <span style="font-weight: 600; color: var(--secondary); font-size: 0.85rem;" id="project-pkg">-</span>
+                    </div>
+                </div>
+
+                <div id="admin-controls-panel" style="display: none; margin-bottom: 24px;"></div>
+
+                <div class="panel" style="padding: 24px; display: flex; flex-direction: column; flex-grow: 1; min-height: 400px;">
+                    <div class="panel-header" style="margin-bottom: 16px; font-size: 1rem;">Project Chat</div>
+                    <div class="chat-box" style="flex-grow: 1;">
+                        <div class="chat-messages" id="chat-messages">
+                            <!-- Injected by JS -->
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" placeholder="Type a message..." id="chat-input-field" onkeypress="handleChatEnter(event)">
+                            <button onclick="sendChatMessage()">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/services-data.js"></script>
+
+    <script>
+        // Global variables for URL params so they can be accessed anywhere
+        let urlParams, serviceId, pkgIndex, orderNum, docIdParam, docId, service, currentPackage;
+        let currentUserId = null;
+        let currentUserRole = null;
+        let currentUserName = "Team Member";
+
+        // Check Authentication and permissions
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                try {
+                    // Check admin privileges
+                    const teamQuery = await firebase.firestore().collection('team').where('email', '==', user.email).get();
+                    if (teamQuery.empty) {
+                        alert("Access Denied. You do not have admin privileges.");
+                        window.location.href = 'dashboard.html';
+                        return;
+                    }
+                    
+                    const teamDoc = teamQuery.docs[0];
+                    const tData = teamDoc.data();
+                    currentUserId = teamDoc.id;
+                    currentUserRole = tData.role || 'Super Admin';
+                    currentUserName = tData.name || user.email;
+
+                    if (typeof hideAuthLoader === 'function') hideAuthLoader();
+                    
+                    // Parse workspace URL
+                    urlParams = new URLSearchParams(window.location.search);
+                    serviceId = urlParams.get('service');
+                    pkgIndex = parseInt(urlParams.get('pkg'));
+                    orderNum = urlParams.get('order') || '#ORD-DEMO';
+                    docIdParam = urlParams.get('docId');
+                    docId = (docIdParam && docIdParam !== 'null' && docIdParam !== 'undefined' && docIdParam.trim() !== '') ? docIdParam : null;
+                    
+                    service = servicesData[serviceId];
+                    currentPackage = null;
+
+                    if (service && service.packages[pkgIndex]) {
+                        currentPackage = service.packages[pkgIndex];
+                        document.getElementById('project-title').innerText = service.name;
+                        document.getElementById('project-order-num').innerText = orderNum;
+                        document.getElementById('project-pkg').innerText = currentPackage.title;
+                        document.getElementById('project-eta').innerText = currentPackage.delivery;
+                        
+                        initWorkspace(serviceId, docId, orderNum);
+                    } else {
+                        alert("Invalid project parameters.");
+                        window.location.href = "admin.html";
+                    }
+                } catch (error) {
+                    console.error("Auth initialization error:", error);
+                    alert("Initialization error. Redirecting...");
+                    window.location.href = "admin.html";
+                }
+            }
+        });
+
+        // Global State
+        let currentStage = 0;
+        let workflowLevels = [];
+
+        function initWorkspace(wsServiceId, wsDocId, wsOrderNum) {
+            // Define workflows based on user rules
+            if(wsServiceId === 'ai-presenter') {
+                workflowLevels = [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Script Writing", role: "Content Writer" },
+                    { label: "L2: Video Editing", role: "Video Editor" },
+                    { label: "Completed", role: "Done" }
+                ];
+            } else if(wsServiceId === 'product-ads') {
+                workflowLevels = [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Storyboard", role: "AI Creator" },
+                    { label: "L2: Footage Creation", role: "AI Creator", internal: true },
+                    { label: "L3: Video Editing", role: "Video Editor" },
+                    { label: "Completed", role: "Done" }
+                ];
+            } else if(wsServiceId === 'cinematic-ads') {
+                workflowLevels = [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Storyboard", role: "AI Creator" },
+                    { label: "L2: Footage Creation", role: "AI Creator", internal: true },
+                    { label: "L3: Video Editing", role: "Video Editor" },
+                    { label: "Completed", role: "Done" }
+                ];
+            } else if(wsServiceId === 'static-posts') {
+                workflowLevels = [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Graphic Design", role: "Graphic Designer" },
+                    { label: "Completed", role: "Done" }
+                ];
+            }
+
+            if (wsDocId) {
+                docId = wsDocId; // Populate global docId
+                attachFirestoreListener(wsDocId);
+            } else if (wsOrderNum) {
+                // Fallback for URLs missing docId
+                firebase.firestore().collection('orders').where('orderNum', '==', wsOrderNum).get().then(snapshot => {
+                    if (!snapshot.empty) {
+                        const actualDocId = snapshot.docs[0].id;
+                        docId = actualDocId; // Populate global docId
+                        attachFirestoreListener(actualDocId);
+                    } else {
+                        document.getElementById('upload-panel-container').innerHTML = '<div class="panel-header">Order Not Found</div><p>Could not locate this order in the database.</p>';
+                    }
+                }).catch(error => {
+                    document.getElementById('upload-panel-container').innerHTML = '<div class="panel-header" style="color:red;">Database Error</div><p>' + error.message + '</p>';
+                });
+            }
+        }
+
+        function attachFirestoreListener(targetDocId) {
+            try {
+                if (!targetDocId || targetDocId === 'null') {
+                    document.getElementById('upload-panel-container').innerHTML = '<div class="panel-header">Invalid Database ID</div><p>Cannot listen to a missing document.</p>';
+                    return;
+                }
+                
+                // Main order listener
+                firebase.firestore().collection('orders').doc(targetDocId).onSnapshot((doc) => {
+                    try {
+                        if(doc.exists) {
+                            const data = doc.data();
+                            currentStage = data.currentStage || 0;
+                            
+                            // Style status badge
+                            const statusEl = document.getElementById('project-status');
+                            if (statusEl) {
+                                statusEl.innerText = data.status || "In Production";
+                                
+                                // Remove old styles
+                                statusEl.className = 'status-badge';
+                                if (data.status === 'Revision Required') {
+                                    statusEl.classList.add('status-error');
+                                } else if (data.status === 'Awaiting Client Approval' || data.status === 'Pending Verification') {
+                                    statusEl.classList.add('status-review');
+                                } else if (data.status === 'Completed') {
+                                    statusEl.classList.add('status-complete');
+                                } else {
+                                    statusEl.classList.add('status-active');
+                                }
+                            }
+                            
+                            updateProgressTracker();
+                            renderRequirementsDetails(data.requirements);
+                            renderUploadPanel(data);
+                             
+                             // Manager Administrative Controls
+                             const isManager = currentUserRole === 'Super Admin' || currentUserRole === 'Project Manager';
+                             const adminPanel = document.getElementById('admin-controls-panel');
+                             if (adminPanel) {
+                                 if (isManager) {
+                                     adminPanel.style.display = 'block';
+                                     adminPanel.innerHTML = `
+                                         <div class="panel" style="padding: 24px; background: rgba(254, 202, 87, 0.03); border: 1px solid rgba(254, 202, 87, 0.15); text-align: left;">
+                                             <div class="panel-header" style="margin-bottom: 16px; font-size: 0.95rem; color: #feca57; display: flex; align-items: center; gap: 6px; font-weight: 700;">
+                                                 <span>⚙️</span> Admin Controls
+                                             </div>
+                                             <div style="display: flex; flex-direction: column; gap: 8px;">
+                                                 <button class="btn btn-outline" style="width: 100%; text-align: center; border-color: rgba(6, 217, 160, 0.3); color: var(--secondary); font-size: 0.8rem; font-weight:600; padding:8px;" onclick="adminForceApprove()">Force Approve Stage</button>
+                                                 <button class="btn btn-outline" style="width: 100%; text-align: center; border-color: rgba(255, 71, 87, 0.3); color: #ff4757; font-size: 0.8rem; font-weight:600; padding:8px;" onclick="adminForceRevision()">Force Request Revision</button>
+                                             </div>
+                                         </div>
+                                     `;
+                                 } else {
+                                     adminPanel.style.display = 'none';
+                                 }
+                             }
+                        } else {
+                            document.getElementById('upload-panel-container').innerHTML = '<div class="panel-header">Order Not Found</div><p style="color: var(--text-muted);">This order could not be found in the database. It may have been deleted.</p>';
+                        }
+                    } catch (e) {
+                        document.getElementById('upload-panel-container').innerHTML = '<div class="panel-header" style="color:red;">Javascript Error</div><p>' + e.message + '</p>';
+                    }
+                });
+
+                // Listen to history subcollection
+                firebase.firestore().collection('orders').doc(targetDocId).collection('history')
+                    .orderBy('createdAt', 'desc')
+                    .onSnapshot((historySnap) => {
+                        renderHistoryTimeline('project-history-timeline', historySnap);
+                    });
+
+                // Initialize Chat Listener
+                initChatListener();
+            } catch (err) {
+                document.getElementById('upload-panel-container').innerHTML = '<div class="panel-header" style="color:red;">Sync Error</div><p>' + err.message + '</p>';
+            }
+        }
+
+        function updateProgressTracker() {
+            let html = '';
+            workflowLevels.forEach((level, index) => {
+                let statusClass = '';
+                if (index < currentStage) {
+                    statusClass = 'completed';
+                } else if (index === currentStage) {
+                    statusClass = 'active';
+                }
+                
+                let internalLabel = level.internal ? ' <span style="font-size: 0.65rem; color: #feca57; background: rgba(254, 202, 87, 0.1); padding: 2px 4px; border-radius: 4px; font-weight: 500; margin-left: 4px;">Internal</span>' : '';
+
+                html += `
+                    <div class="step ${statusClass}">
+                        <div class="step-circle">${index < currentStage ? '✓' : index}</div>
+                        <div class="step-label">${level.label}${internalLabel}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('progress-tracker').innerHTML = html;
+        }
+
+        function renderRequirementsDetails(requirements) {
+            const container = document.getElementById('requirements-details-container');
+            if (!container) return;
+            
+            if (!requirements || Object.keys(requirements).length === 0) {
+                container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; padding: 12px; text-align: center;">No requirements submitted yet.</div>';
+                return;
+            }
+            
+            let html = '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; text-align: left;">';
+            for (const [key, value] of Object.entries(requirements)) {
+                const label = key.charAt(0).toUpperCase() + key.slice(1);
+                let valHTML = value;
+                if (typeof value === 'string' && (value.startsWith('http://') || value.startsWith('https://'))) {
+                    valHTML = `<a href="${value}" target="_blank" style="color: var(--primary); text-decoration: underline; word-break: break-all;">View Assets ↗</a>`;
+                }
+                
+                html += `
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 12px; border-radius: 6px;">
+                        <div style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">${label}</div>
+                        <div style="font-size: 0.9rem; color: #fff; white-space: pre-wrap;">${valHTML || '-'}</div>
+                    </div>
+                `;
+            }
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderUploadPanel(data) {
+            const container = document.getElementById('upload-panel-container');
+            if (!container) return;
+            
+            const isManager = currentUserRole === 'Super Admin' || currentUserRole === 'Project Manager';
+            const isAssigned = data.assignedTo === currentUserId;
+            
+            if (!isManager && !isAssigned) {
+                // If it is in the pool and they match the role, allow them to claim it!
+                if (!data.assignedTo && data.targetRole === currentUserRole) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 24px; color: var(--text-muted);">
+                            <p style="margin-bottom: 16px;">This milestone is currently unassigned but matches your role (${currentUserRole}).</p>
+                            <button class="btn btn-success" style="width: auto; padding: 10px 24px; font-weight:700;" onclick="claimOrder()">Accept & Start Order</button>
+                        </div>
+                    `;
+                } else {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 24px; color: var(--text-muted);">
+                            <p>This order is currently assigned to another team member or requires a different role.</p>
+                        </div>
+                    `;
+                }
+                return;
+            }
+            
+            // Render Revision notes warning box
+            let revisionBox = '';
+            if (data.revisionNotes && data.status === 'Revision Required') {
+                revisionBox = `
+                    <div style="background: rgba(255, 71, 87, 0.05); border: 1px solid rgba(255, 71, 87, 0.2); padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: left;">
+                        <div style="font-weight: 700; color: #ff4757; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Revision Requested by Client</div>
+                        <p style="color: var(--text-main); font-size: 0.9rem; margin: 0; white-space: pre-wrap;">${data.revisionNotes}</p>
+                    </div>
+                `;
+            }
+
+            const isEditingActive = data.status === 'Awaiting Client Approval';
+            const existingLink = isEditingActive ? (data.clientDeliverableLink || '') : '';
+            const existingNotes = isEditingActive ? (data.uploadNotes || '') : '';
+            const submitText = isEditingActive ? "Update & Notify Client" : "Upload & Notify Client";
+            
+            container.innerHTML = `
+                <div class="panel-header" style="margin-bottom: 16px; font-size: 1.1rem; text-align: left;">📤 Deliverables Submission</div>
+                ${revisionBox}
+                
+                <div class="form-group" style="text-align: left;">
+                    <label class="form-label">Google Drive Folder Link</label>
+                    <input type="text" id="upload-link" class="form-control" value="${existingLink}" placeholder="Paste link here...">
+                </div>
+                
+                <div class="form-group" style="text-align: left; margin-bottom: 24px;">
+                    <label class="form-label">Notes to Client</label>
+                    <textarea id="upload-notes" class="form-control" rows="3" placeholder="e.g. Here is the first draft, let us know what you think!">${existingNotes}</textarea>
+                </div>
+                
+                <button class="btn-success" id="btn-upload-submit" onclick="submitDeliverables()">${submitText}</button>
+            `;
+        }
+
+        async function claimOrder() {
+            try {
+                console.log("claimOrder called. docId:", docId, "currentUserId:", currentUserId);
+                if (!docId) {
+                    alert("Error: Order database ID is missing.");
+                    return;
+                }
+                if (!currentUserId) {
+                    alert("Error: Your team member profile ID is missing. Try logging in again.");
+                    return;
+                }
+                await firebase.firestore().collection('orders').doc(docId).update({
+                    assignedTo: currentUserId,
+                    contributors: firebase.firestore.FieldValue.arrayUnion(currentUserId)
+                });
+                alert("Order claimed successfully!");
+            } catch (e) {
+                console.error("claimOrder error:", e);
+                alert("Failed to claim order: " + e.message);
+            }
+        }
+
+        async function adminForceApprove() {
+            if (!confirm("Are you sure you want to force-approve this milestone stage as a Manager?")) return;
+            
+            try {
+                const nextStage = currentStage + 1;
+                const nextRole = workflowLevels[nextStage] ? workflowLevels[nextStage].role : "Done";
+                const isDone = nextRole === "Done";
+                
+                const updateFields = {
+                    currentStage: nextStage,
+                    status: isDone ? "Completed" : "In Production",
+                    targetRole: nextRole,
+                    assignedTo: null
+                };
+
+                if (!isDone) {
+                    updateFields.clientDeliverableLink = firebase.firestore.FieldValue.delete();
+                    updateFields.internalAssets = firebase.firestore.FieldValue.delete();
+                    updateFields.uploadNotes = firebase.firestore.FieldValue.delete();
+                } else {
+                    updateFields.completedAt = firebase.firestore.FieldValue.serverTimestamp();
+                }
+
+                await firebase.firestore().collection('orders').doc(docId).update(updateFields);
+
+                await firebase.firestore().collection('orders').doc(docId).collection('history').add({
+                    type: 'approval',
+                    stageLabel: workflowLevels[currentStage].label,
+                    userName: 'Manager Override',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                alert("Stage force-approved successfully!");
+            } catch (err) {
+                console.error("Force approve error:", err);
+                alert("Failed to force approve: " + err.message);
+            }
+        }
+
+        async function adminForceRevision() {
+            const reason = prompt("Enter the reason for requesting a revision (this note will be shown to the creative team):");
+            if (!reason) return;
+            
+            try {
+                await firebase.firestore().collection('orders').doc(docId).update({
+                    status: "Revision Required",
+                    revisionNotes: reason
+                });
+
+                await firebase.firestore().collection('orders').doc(docId).collection('history').add({
+                    type: 'revision',
+                    stageLabel: workflowLevels[currentStage].label,
+                    userName: 'Manager Override',
+                    notes: reason,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                alert("Revision request submitted successfully.");
+            } catch (err) {
+                console.error("Force revision error:", err);
+                alert("Failed to submit revision request: " + err.message);
+            }
+        }
+
+        async function submitDeliverables() {
+            const link = document.getElementById('upload-link').value.trim();
+            if(!link) { alert("Please provide a link."); return; }
+            const notes = document.getElementById('upload-notes').value.trim();
+
+            const submitBtn = document.getElementById('btn-upload-submit');
+            let originalText = "Upload & Notify Client";
+            if (submitBtn) {
+                originalText = submitBtn.innerText;
+                submitBtn.disabled = true;
+                submitBtn.innerText = "Processing...";
+            }
+
+            const currentLevel = workflowLevels[currentStage];
+            const isInternal = currentLevel && currentLevel.internal;
+
+            try {
+                if (isInternal) {
+                    const nextStage = currentStage + 1;
+                    const nextRole = workflowLevels[nextStage] ? workflowLevels[nextStage].role : "Done";
+
+                    await firebase.firestore().collection('orders').doc(docId).update({
+                        internalAssets: link,
+                        uploadNotes: notes,
+                        currentStage: nextStage,
+                        targetRole: nextRole,
+                        assignedTo: null,
+                        contributors: firebase.firestore.FieldValue.arrayUnion(currentUserId)
+                    });
+                    
+                    await firebase.firestore().collection('orders').doc(docId).collection('history').add({
+                        type: 'upload',
+                        stageLabel: currentLevel.label + " (Internal Submission)",
+                        link: link,
+                        notes: notes,
+                        userName: `${currentUserName} (${currentUserRole})`,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    alert("Internal assets submitted to the next role.");
+                } else {
+                    const orderDoc = await firebase.firestore().collection('orders').doc(docId).get();
+                    const orderData = orderDoc.data();
+                    const isUpdate = !!(orderData && orderData.clientDeliverableLink);
+
+                    await firebase.firestore().collection('orders').doc(docId).update({
+                        status: 'Awaiting Client Approval',
+                        clientDeliverableLink: link,
+                        uploadNotes: notes,
+                        revisionNotes: firebase.firestore.FieldValue.delete(),
+                        contributors: firebase.firestore.FieldValue.arrayUnion(currentUserId)
+                    });
+
+                    await firebase.firestore().collection('orders').doc(docId).collection('history').add({
+                        type: 'upload',
+                        stageLabel: currentLevel.label,
+                        link: link,
+                        notes: notes,
+                        userName: `${currentUserName} (${currentUserRole})`,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    let msgText = isUpdate
+                        ? 'The creative team has updated the deliverables for review! Please check the project page.'
+                        : 'The creative team has submitted new deliverables for review! Please check the project page.';
+                    if (notes) {
+                        msgText += '\n\nNotes:\n' + notes;
+                    }
+
+                    await firebase.firestore().collection('orders').doc(docId).collection('messages').add({
+                        text: msgText,
+                        senderId: 'system',
+                        senderName: 'System',
+                        isAdmin: true,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    const successMsg = isUpdate 
+                        ? "Deliverables Updated Successfully! Client has been notified."
+                        : "Deliverables Uploaded Successfully! Client has been notified.";
+                    alert(successMsg);
+                }
+            } catch(e) {
+                console.error(e);
+                alert("Upload failed.");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
+                }
+            }
+        }
+
+        // --- CHAT LOGIC (Firebase) ---
+
+        function handleChatEnter(e) {
+            if(e.key === 'Enter') sendChatMessage();
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input-field');
+            const msg = input.value.trim();
+            if(!msg || !docId) return;
+
+            input.value = '';
+
+            try {
+                await firebase.firestore().collection('orders').doc(docId).collection('messages').add({
+                    text: msg,
+                    senderId: currentUserId,
+                    senderName: currentUserName,
+                    isAdmin: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error sending message: ", error);
+            }
+        }
+
+        function initChatListener() {
+            if (!docId) return;
+            const chatBox = document.getElementById('chat-messages');
+            
+            firebase.firestore().collection('orders').doc(docId).collection('messages')
+                .orderBy('createdAt', 'asc')
+                .onSnapshot((snapshot) => {
+                    chatBox.innerHTML = '';
+                    snapshot.forEach((doc) => {
+                        const msg = doc.data();
+                        const roleClass = msg.isAdmin ? 'admin' : 'user';
+                        chatBox.innerHTML += `<div class="chat-msg ${roleClass}">${msg.text}</div>`;
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+        }
+
+        function renderHistoryTimeline(containerId, snapshot) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; padding: 12px; text-align: center;">No activity recorded yet.</div>';
+                return;
+            }
+
+            let html = '';
+            snapshot.forEach((doc) => {
+                const event = doc.data();
+                const dateText = event.createdAt ? new Date(event.createdAt.seconds * 1000).toLocaleString() : 'Just now';
+                
+                let icon = 'ℹ️';
+                let title = 'Activity Logged';
+                let iconBg = 'rgba(255,255,255,0.03)';
+                let notesHTML = '';
+                
+                if (event.type === 'requirements') {
+                    icon = '📝';
+                    title = 'Requirements Submitted';
+                    iconBg = 'rgba(0, 163, 255, 0.1)';
+                } else if (event.type === 'upload') {
+                    icon = '📁';
+                    title = `${event.stageLabel || 'Deliverables'} Submitted`;
+                    iconBg = 'rgba(6, 217, 160, 0.1)';
+                    if (event.link) {
+                        notesHTML += `<div style="margin-top: 6px;"><a href="${event.link}" target="_blank" style="color: var(--primary); font-size: 0.8rem; text-decoration: underline;">View Uploaded Files ↗</a></div>`;
+                    }
+                } else if (event.type === 'revision') {
+                    icon = '🔄';
+                    title = `Revision Requested (${event.stageLabel || 'Milestone'})`;
+                    iconBg = 'rgba(255, 71, 87, 0.1)';
+                } else if (event.type === 'approval') {
+                    icon = '✅';
+                    title = `${event.stageLabel || 'Milestone'} Approved`;
+                    iconBg = 'rgba(6, 217, 160, 0.15)';
+                }
+                
+                if (event.notes) {
+                    notesHTML += `
+                        <div style="margin-top: 8px; background: rgba(0,0,0,0.15); border-left: 2px solid rgba(255,255,255,0.15); padding: 8px 12px; border-radius: 4px; font-size: 0.85rem; color: #fff; white-space: pre-wrap;">${event.notes}</div>
+                    `;
+                }
+
+                html += `
+                    <div style="display: flex; gap: 12px; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                        <div style="font-size: 1.1rem; background: ${iconBg}; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">${icon}</div>
+                        <div style="flex-grow: 1; overflow: hidden;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                                <span style="font-weight: 700; color: #fff; font-size: 0.85rem;">${title}</span>
+                                <span style="font-size: 0.7rem; color: var(--text-muted); white-space: nowrap;">${dateText}</span>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">by ${event.userName || 'System'}</div>
+                            ${notesHTML}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Member Profile | MSMEgrowth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 14, 23, 0.95);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .main-view {
+            flex-grow: 1;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            overflow-y: auto;
+            max-height: 100vh;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 24px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--gradient-brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .panel {
+            background: rgba(15, 18, 25, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 24px;
+        }
+
+        .panel-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        /* Sidebar nav items */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: 0.3s;
+            margin-bottom: 8px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+        .nav-icon {
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+        }
+        .nav-item.active {
+            border-left: 3px solid var(--primary);
+            background: rgba(0, 163, 255, 0.05);
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th {
+            text-align: left;
+            padding: 16px 24px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .data-table td {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            color: var(--text-main);
+            vertical-align: middle;
+            text-align: left;
+        }
+        .data-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 6px 12px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        .role-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 4px;
+        }
+
+        /* Status colors */
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+        }
+        .status-review { background: rgba(254, 202, 87, 0.1); color: #feca57; border: 1px solid rgba(254, 202, 87, 0.3); }
+        .status-active { background: rgba(0, 163, 255, 0.1); color: var(--primary); border: 1px solid rgba(0, 163, 255, 0.3); }
+        .status-complete { background: rgba(6, 217, 160, 0.1); color: var(--secondary); border: 1px solid rgba(6, 217, 160, 0.3); }
+        .status-error { background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <a href="admin.html" class="nav-logo" style="margin-bottom: 48px; display: block;">MSME<span style="color: var(--primary);">growth</span></a>
+            
+            <nav style="flex-grow: 1;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; padding-left: 16px;">Workspace</div>
+                
+                <a href="admin.html" class="nav-item active">
+                    <span class="nav-icon" style="font-size: 1.2rem;">📂</span> Active Orders
+                </a>
+            </nav>
+
+            <a href="#" class="nav-item" style="margin-bottom: 0;" onclick="firebase.auth().signOut().then(() => window.location.href='login.html')">
+                <span class="nav-icon" style="font-size: 1.2rem;">🚪</span> Sign Out
+            </a>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-view">
+            
+            <div class="top-bar">
+                <div class="profile-header">
+                    <div id="member-avatar" class="avatar">?</div>
+                    <div style="text-align: left;">
+                        <h1 style="font-size: 1.8rem; font-weight: 800; margin: 0;" id="member-name">Loading Profile...</h1>
+                        <div id="member-email" style="color: var(--text-muted); font-size: 0.9rem; margin-top: 2px;">loading@email.com</div>
+                        <div id="member-role" class="role-badge">Loading</div>
+                    </div>
+                </div>
+                <button class="btn-outline" onclick="window.location.href='admin.html'">← Back to Dashboard</button>
+            </div>
+
+            <!-- Stats Panels -->
+            <div style="display: flex; gap: 20px;">
+                <div style="flex: 1; background: rgba(0, 163, 255, 0.05); border: 1px solid rgba(0, 163, 255, 0.15); padding: 24px; border-radius: 12px; text-align: left;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Ongoing Projects</div>
+                    <div style="font-size: 2.2rem; font-weight: 800; color: #fff;" id="stats-ongoing">0</div>
+                </div>
+                <div style="flex: 1; background: rgba(6, 217, 160, 0.05); border: 1px solid rgba(6, 217, 160, 0.15); padding: 24px; border-radius: 12px; text-align: left;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Completed Projects</div>
+                    <div style="font-size: 2.2rem; font-weight: 800; color: var(--secondary);" id="stats-completed">0</div>
+                </div>
+            </div>
+
+            <!-- Ongoing Orders Section -->
+            <div class="panel">
+                <div class="panel-title">📂 Ongoing Milestones</div>
+                <div style="overflow: hidden; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Client / Business</th>
+                                <th>Service Type</th>
+                                <th>Current Stage</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ongoing-table-body">
+                            <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Loading ongoing projects...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Completed Orders Section -->
+            <div class="panel">
+                <div class="panel-title">🎉 Completed Deliveries</div>
+                <div style="overflow: hidden; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Client / Business</th>
+                                <th>Service Type</th>
+                                <th>Package Tier</th>
+                                <th>Billing (Price)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="completed-table-body">
+                            <tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Loading completed deliveries...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/ui-utils.js"></script>
+
+    <script>
+        function isDateInLastMonth(date) {
+            const now = new Date();
+            let lmYear = now.getFullYear();
+            let lmMonth = now.getMonth() - 1;
+            if (lmMonth < 0) {
+                lmMonth = 11;
+                lmYear -= 1;
+            }
+            return date.getFullYear() === lmYear && date.getMonth() === lmMonth;
+        }
+
+        let memberId = null;
+
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                try {
+                    // Check if current user is PM or Super Admin
+                    const teamQuery = await firebase.firestore().collection('team').where('email', '==', user.email).get();
+                    if (teamQuery.empty) {
+                        alert("Access Denied.");
+                        window.location.href = 'dashboard.html';
+                        return;
+                    }
+                    
+                    const tData = teamQuery.docs[0].data();
+                    const viewerRole = tData.role || 'Super Admin';
+                    if (viewerRole !== 'Super Admin' && viewerRole !== 'Project Manager') {
+                        alert("Access Denied. You do not have permission to view team profiles.");
+                        window.location.href = 'admin.html';
+                        return;
+                    }
+
+                    if (typeof hideAuthLoader === 'function') hideAuthLoader();
+
+                    // Parse profile member ID
+                    const urlParams = new URLSearchParams(window.location.search);
+                    memberId = urlParams.get('id');
+                    if (!memberId) {
+                        alert("Team Member ID not provided.");
+                        window.location.href = 'admin.html';
+                        return;
+                    }
+
+                    loadMemberProfile();
+                } catch (error) {
+                    console.error("Auth error:", error);
+                    window.location.href = "admin.html";
+                }
+            }
+        });
+
+        async function loadMemberProfile() {
+            try {
+                // Fetch Member Document
+                const memberDoc = await firebase.firestore().collection('team').doc(memberId).get();
+                if (!memberDoc.exists) {
+                    alert("Team member not found.");
+                    window.location.href = "admin.html";
+                    return;
+                }
+                const mData = memberDoc.data();
+                
+                // Set Header Details
+                document.getElementById('member-name').innerText = mData.name;
+                document.getElementById('member-email').innerText = mData.email;
+                document.getElementById('member-role').innerText = mData.role;
+                
+                const initials = mData.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                document.getElementById('member-avatar').innerText = initials;
+
+                // Load Orders where this member has contributed
+                firebase.firestore().collection('orders')
+                    .where('contributors', 'array-contains', memberId)
+                    .onSnapshot((snapshot) => {
+                        let ongoingHTML = '';
+                        let completedHTML = '';
+                        let ongoingCount = 0;
+                        let completedCount = 0;
+                        let lastMonthCompletedCount = 0;
+
+                        // Sort by last update or creation
+                        const orders = [];
+                        snapshot.forEach(doc => {
+                            orders.push({ id: doc.id, ...doc.data() });
+                        });
+                        orders.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                        orders.forEach(o => {
+                            if (o.status === 'Completed') {
+                                completedCount++;
+
+                                let compDate = null;
+                                if (o.completedAt) {
+                                    compDate = o.completedAt.toDate ? o.completedAt.toDate() : new Date(o.completedAt);
+                                } else {
+                                    compDate = o.createdAt ? (o.createdAt.toDate ? o.createdAt.toDate() : new Date(o.createdAt)) : new Date();
+                                }
+                                
+                                if (compDate && isDateInLastMonth(compDate)) {
+                                    lastMonthCompletedCount++;
+                                }
+
+                                completedHTML += `
+                                    <tr>
+                                        <td style="font-weight: 700; color: var(--primary);">${o.orderNum}</td>
+                                        <td><div style="font-weight: 600;">${o.businessName || 'Client Name'}</div><div style="font-size: 0.8rem; color: var(--text-muted);">${o.clientEmail || 'client@email.com'}</div></td>
+                                        <td>${o.serviceName}</td>
+                                        <td>${o.pkgTitle || '-'}</td>
+                                        <td style="font-weight: 700; color: var(--secondary);">${o.price || 'N/A'}</td>
+                                        <td>
+                                            <button class="btn-outline" onclick="window.location.href='admin-project.html?service=${o.serviceId}&pkg=${o.pkgIndex || 0}&order=${o.orderNum}&docId=${o.id}'">View History</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            } else {
+                                ongoingCount++;
+                                
+                                // Determine status badge styling
+                                let statusClass = 'status-active';
+                                if (o.status === 'Revision Required') {
+                                    statusClass = 'status-error';
+                                } else if (o.status === 'Awaiting Client Approval') {
+                                    statusClass = 'status-review';
+                                }
+
+                                ongoingHTML += `
+                                    <tr>
+                                        <td style="font-weight: 700; color: var(--primary);">${o.orderNum}</td>
+                                        <td><div style="font-weight: 600;">${o.businessName || 'Client Name'}</div><div style="font-size: 0.8rem; color: var(--text-muted);">${o.clientEmail || 'client@email.com'}</div></td>
+                                        <td>${o.serviceName}</td>
+                                        <td>Stage ${o.currentStage || 1}</td>
+                                        <td><span class="status-badge ${statusClass}">${o.status}</span></td>
+                                        <td>
+                                            <button class="btn-outline" onclick="window.location.href='admin-project.html?service=${o.serviceId}&pkg=${o.pkgIndex || 0}&order=${o.orderNum}&docId=${o.id}'">Enter Workspace</button>
+                                        </td>
+                                    </tr>
+                                `;
+                            }
+                        });
+
+                        document.getElementById('stats-ongoing').innerText = ongoingCount;
+                        document.getElementById('stats-completed').innerHTML = `${completedCount} <span style="font-size: 1.1rem; color: var(--text-muted); font-weight: 500;">(LM: ${lastMonthCompletedCount})</span>`;
+
+                        // Set tables html
+                        if (ongoingHTML === '') {
+                            ongoingHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No ongoing milestones.</td></tr>';
+                        }
+                        if (completedHTML === '') {
+                            completedHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No completed deliveries recorded.</td></tr>';
+                        }
+
+                        document.getElementById('ongoing-table-body').innerHTML = ongoingHTML;
+                        document.getElementById('completed-table-body').innerHTML = completedHTML;
+                    });
+
+            } catch (err) {
+                console.error("Error loading team member details:", err);
+                alert("Database sync error.");
+            }
+        }
+    </script>
+</body>
+</html>

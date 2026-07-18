@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Command Center | MSMEgrowth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            overflow: hidden;
+            background: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .dashboard-layout {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 14, 23, 0.95);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            padding: 32px 24px;
+        }
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: 0.3s;
+            margin-bottom: 8px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+        }
+        .nav-item.active {
+            border-left: 3px solid var(--primary);
+            background: rgba(0, 163, 255, 0.05);
+        }
+
+        /* Main View */
+        .main-view {
+            flex-grow: 1;
+            height: 100vh;
+            overflow-y: auto;
+            padding: 40px;
+        }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 48px;
+        }
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--gradient-brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        /* Sections */
+        .admin-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .admin-section.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th {
+            text-align: left;
+            padding: 16px 24px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .data-table td {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            color: var(--text-main);
+            vertical-align: middle;
+        }
+        .data-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        /* Badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .status-review { background: rgba(254, 202, 87, 0.1); color: #feca57; border: 1px solid rgba(254, 202, 87, 0.3); }
+        .status-active { background: rgba(0, 163, 255, 0.1); color: var(--primary); border: 1px solid rgba(0, 163, 255, 0.3); }
+        .status-complete { background: rgba(6, 217, 160, 0.1); color: var(--secondary); border: 1px solid rgba(6, 217, 160, 0.3); }
+        .status-error { background: rgba(255, 71, 87, 0.1); color: #ff4757; border: 1px solid rgba(255, 71, 87, 0.3); }
+
+        .role-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.1);
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        .btn-outline:hover { background: rgba(255,255,255,0.1); }
+        
+        .btn-success {
+            background: var(--secondary);
+            color: #000;
+        }
+        .btn-success:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(6,217,160,0.3); }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+        
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: rgba(15, 18, 25, 1);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        /* Chat UI */
+        .chat-container {
+            display: flex;
+            height: 70vh;
+            background: rgba(15, 18, 25, 0.9);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            margin-top: 24px;
+        }
+        .chat-threads {
+            width: 320px;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            flex-direction: column;
+            background: rgba(10, 14, 23, 0.4);
+            overflow-y: auto;
+        }
+        .thread-item {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .thread-item:hover, .thread-item.active {
+            background: rgba(255,255,255,0.03);
+            border-left: 3px solid var(--primary);
+        }
+        .thread-title { font-weight: 700; margin-bottom: 8px; color: #fff; }
+        .thread-preview { font-size: 0.8rem; color: var(--text-muted); }
+        .chat-window {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0,0,0,0.2);
+        }
+        .chat-header {
+            padding: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-weight: 700; font-size: 1.2rem; color: #fff;
+            background: rgba(10, 14, 23, 0.4);
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .chat-msg {
+            max-width: 70%;
+            padding: 12px 18px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .chat-msg.user { /* Client */
+            background: rgba(255,255,255,0.05);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+        .chat-msg.admin { /* Admin */
+            background: var(--primary);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-input-area {
+            padding: 20px 24px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            gap: 16px;
+            background: rgba(10, 14, 23, 0.4);
+        }
+        .chat-input {
+            flex-grow: 1;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <a href="index.html" class="nav-logo" style="margin-bottom: 48px; display: block;">MSME<span style="color: var(--primary);">growth</span></a>
+            
+            <nav style="flex-grow: 1;">
+                <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; padding-left: 16px;">Production</div>
+                
+                <button class="nav-item active" onclick="switchSection('orders', this)">
+                    <span class="nav-icon" style="font-size: 1.2rem;">📂</span> Active Orders
+                </button>
+                <button class="nav-item" id="nav-payments" style="display: none;" onclick="switchSection('payments', this)">
+                    <span class="nav-icon" style="font-size: 1.2rem;">💰</span> Payments <span class="status-badge status-review" style="margin-left: auto;" id="payment-badge">1 New</span>
+                </button>
+                
+                <div id="mgmt-section" style="display: none;">
+                    <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 32px; margin-bottom: 16px; padding-left: 16px;">Management</div>
+
+                    <button class="nav-item" id="nav-roles" onclick="switchSection('roles', this)">
+                        <span class="nav-icon" style="font-size: 1.2rem;">👥</span> User Roles
+                    </button>
+                    <button class="nav-item" id="nav-messages" onclick="switchSection('messages', this)">
+                        <span class="nav-icon" style="font-size: 1.2rem;">💬</span> Support Messages
+                    </button>
+                </div>
+            </nav>
+
+            <button class="nav-item" style="margin-bottom: 0;" onclick="window.location.href='login.html'">
+                <span class="nav-icon" style="font-size: 1.2rem;">🚪</span> Sign Out
+            </button>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-view">
+            
+            <div class="top-bar">
+                <div>
+                    <h1 style="font-size: 2rem; margin-bottom: 8px;">Command Center</h1>
+                    <p class="text-muted">Manage active orders, verify payments, and control access.</p>
+                </div>
+                <div class="user-profile">
+                    <div style="text-align: right;">
+                        <div id="admin-user-name" style="font-weight: 700;">Loading...</div>
+                        <div id="admin-user-role" class="role-badge">Loading</div>
+                    </div>
+                    <div id="admin-user-avatar" class="avatar">?</div>
+                </div>
+            </div>
+
+            <!-- SECTION: ACTIVE ORDERS -->
+            <div id="sec-orders" class="admin-section active">
+                <!-- Stats Panel -->
+                <div id="team-stats-container" style="display: flex; gap: 20px; margin-bottom: 24px;"></div>
+
+                <div class="card glass" style="padding: 0; overflow: hidden;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Client / Business</th>
+                                <th>Service Type</th>
+                                <th>Current Stage</th>
+                                <th>Assigned To</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION: PAYMENTS -->
+            <div id="sec-payments" class="admin-section">
+                <div class="card glass" style="padding: 0; overflow: hidden;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Client</th>
+                                <th>Service Purchased</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payments-table-body">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION: USER ROLES -->
+            <div id="sec-roles" class="admin-section">
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 style="font-size: 1.2rem;">Team Members & Permissions</h2>
+                    <button class="btn btn-primary" onclick="openInviteModal()">+ Invite Member</button>
+                </div>
+
+                <div class="card glass" style="padding: 0; overflow: hidden;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Assigned Projects</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="team-table-body">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECTION: MESSAGES -->
+            <div id="sec-messages" class="admin-section">
+                <div class="chat-container">
+                    <div class="chat-threads">
+                        <div style="padding: 24px; border-bottom: 1px solid rgba(255,255,255,0.05); font-weight: 800; text-transform: uppercase; letter-spacing: 1px; font-size: 0.8rem; color: var(--text-muted);">
+                            Client Conversations
+                        </div>
+                        <div id="admin-thread-list">
+                            <!-- Populated by JS -->
+                            <div style="padding: 24px; color: var(--text-muted); font-size: 0.9rem;">Loading...</div>
+                        </div>
+                    </div>
+                    <div class="chat-window">
+                        <div class="chat-header" id="admin-chat-header">
+                            Select a conversation
+                        </div>
+                        <div class="chat-messages" id="admin-chat-messages">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div class="chat-input-area" id="admin-chat-input-area" style="display: none;">
+                            <input type="text" id="admin-chat-input" class="chat-input" placeholder="Type your reply..." onkeypress="if(event.key === 'Enter') sendAdminMessage()">
+                            <button class="btn btn-primary" onclick="sendAdminMessage()">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL: UPLOAD DELIVERABLES -->
+    <div class="modal-overlay" id="uploadModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 style="font-size: 1.5rem;" id="modal-order-id">#ORD-XXXX</h2>
+                <button style="background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;" onclick="closeModal()">×</button>
+            </div>
+            
+            <p style="color: var(--text-muted); margin-bottom: 24px;">Upload deliverables to complete the current milestone and notify the client for approval.</p>
+
+            <!-- Client Revision Notes Container -->
+            <div id="revision-notes-container" style="display: none; background: rgba(255, 71, 87, 0.05); border: 1px solid rgba(255, 71, 87, 0.2); padding: 16px; border-radius: 8px; margin-bottom: 20px; text-align: left;">
+                <div style="font-weight: 700; color: #ff4757; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Revision Requested by Client</div>
+                <p id="modal-revision-notes" style="color: var(--text-main); font-size: 0.9rem; margin: 0; white-space: pre-wrap;"></p>
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Google Drive Folder Link</label>
+                <input type="text" id="upload-link" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px;" placeholder="Paste link here...">
+            </div>
+
+            <div style="margin-bottom: 32px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Admin Notes to Client</label>
+                <textarea id="upload-notes" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px;" rows="3" placeholder="e.g. Here is the final draft, let us know what you think!"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 16px; justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-success" id="btn-upload-submit" onclick="confirmUpload()">Upload & Notify Client</button>
+            </div>
+
+            <!-- Modal History Section -->
+            <div style="margin-top: 24px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                <label style="display: block; margin-bottom: 12px; font-weight: 600; font-size: 0.9rem; color: #fff;">Project History & Activity Log</label>
+                <div id="modal-history-timeline" style="max-height: 250px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="color: var(--text-muted); font-size: 0.85rem;">No history recorded yet.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: INVITE MEMBER -->
+    <div class="modal-overlay" id="inviteModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 style="font-size: 1.5rem;">Invite Team Member</h2>
+                <button style="background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;" onclick="closeInviteModal()">×</button>
+            </div>
+            
+            <p style="color: var(--text-muted); margin-bottom: 24px;">Add a new staff member. They will be able to log in with this email.</p>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Full Name</label>
+                <input type="text" id="invite-name" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px;" placeholder="e.g. John Doe">
+            </div>
+            
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Email Address</label>
+                <input type="email" id="invite-email" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px;" placeholder="e.g. john@msmegrowth.com">
+            </div>
+
+            <div style="margin-bottom: 32px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem;">Role</label>
+                <select id="invite-role" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; font-family: inherit;">
+                    <option value="Super Admin">Super Admin</option>
+                    <option value="Project Manager">Project Manager</option>
+                    <option value="Graphic Designer">Graphic Designer</option>
+                    <option value="Content Writer">Content Writer</option>
+                    <option value="Video Editor">Video Editor</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 16px; justify-content: flex-end;">
+                <button class="btn btn-outline" onclick="closeInviteModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="confirmInvite()">Add Member</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script>
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                try {
+                    const teamQuery = await firebase.firestore().collection('team').where('email', '==', user.email).get();
+                    if (teamQuery.empty) {
+                        alert("Access Denied. You do not have admin privileges.");
+                        window.location.href = 'dashboard.html';
+                        return;
+                    }
+                    
+                    const teamDoc = teamQuery.docs[0];
+                    const tData = teamDoc.data();
+                    currentUserId = teamDoc.id;
+                    currentUserRole = tData.role || 'Super Admin';
+                    
+                    // Update Profile Header
+                    document.getElementById('admin-user-name').innerText = tData.name || user.email;
+                    document.getElementById('admin-user-role').innerText = currentUserRole;
+                    document.getElementById('admin-user-avatar').innerText = (tData.name ? tData.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase());
+
+                    // RBAC UI: Show tabs for Manager/Admin, otherwise keep hidden
+                    if (currentUserRole === 'Super Admin' || currentUserRole === 'Project Manager') {
+                        document.getElementById('nav-payments').style.display = 'flex';
+                        document.getElementById('mgmt-section').style.display = 'block';
+                        initAdminThreads();
+                    }
+                    if (typeof hideAuthLoader === 'function') hideAuthLoader();
+                    
+                    // Initialize data once verified as admin
+                    renderData();
+                } catch(e) {
+                    console.error("Admin verification error:", e);
+                    window.location.href = 'dashboard.html';
+                }
+            }
+        });
+
+        // Tab Navigation
+        function switchSection(sectionId, btnElement) {
+            document.querySelectorAll('.admin-section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById('sec-' + sectionId).classList.add('active');
+            btnElement.classList.add('active');
+        }
+
+        // Dynamic Data
+        let unsubscribeOrders = null;
+        let unsubscribeTeam = null;
+        let teamMembers = [];
+        let currentUserRole = '';
+        let currentUserId = '';
+
+        function renderData() {
+            if (unsubscribeOrders) unsubscribeOrders();
+            if (unsubscribeTeam) unsubscribeTeam();
+
+            // Fetch team members first so we can populate assignment dropdowns
+            unsubscribeTeam = firebase.firestore().collection('team').onSnapshot((snap) => {
+                teamMembers = [];
+                let tHTML = '';
+                
+                snap.forEach((doc) => {
+                    const t = { id: doc.id, ...doc.data() };
+                    teamMembers.push(t);
+                    
+                    const initials = t.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                    
+                    let roleColor = '#fff';
+                    let roleBg = 'rgba(255,255,255,0.1)';
+                    if(t.role === 'Super Admin') {
+                        roleColor = '#feca57';
+                        roleBg = 'rgba(254, 202, 87, 0.2)';
+                    } else if (t.role === 'Project Manager') {
+                        roleColor = 'var(--primary)';
+                        roleBg = 'rgba(0, 163, 255, 0.2)';
+                    }
+
+                    tHTML += `
+                        <tr>
+                            <td>
+                                <div style="display: flex; align-items: center; gap: 12px; cursor: pointer;" onclick="window.location.href='team-member.html?id=${doc.id}'">
+                                    <div style="width: 32px; height: 32px; border-radius: 16px; background: var(--gradient-brand); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;">${initials}</div>
+                                    <div style="font-weight: 600; color: var(--primary); text-decoration: underline;">${t.name}</div>
+                                </div>
+                            </td>
+                            <td><span style="color: var(--text-muted);">${t.email}</span></td>
+                            <td><span class="role-badge" style="background: ${roleBg}; color: ${roleColor};">${t.role}</span></td>
+                            <td>${t.assignedProjects || 0} Active</td>
+                            <td><button class="btn btn-outline" onclick="deleteTeamMember('${doc.id}')">Remove</button></td>
+                        </tr>
+                    `;
+                });
+                
+                if (tHTML === '') {
+                    tHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No team members found.</td></tr>';
+                }
+                document.getElementById('team-table-body').innerHTML = tHTML;
+                
+                // Re-render orders if they are already loaded so the dropdowns update
+                renderOrdersTable();
+            });
+
+            unsubscribeOrders = firebase.firestore().collection('orders')
+                .onSnapshot((snapshot) => {
+                    allOrders = [];
+                    snapshot.forEach((doc) => {
+                        allOrders.push({ id: doc.id, ...doc.data() });
+                    });
+                    renderOrdersTable();
+                });
+        }
+        
+        let allOrders = [];
+
+        function getWorkflowLevels(serviceId) {
+            if(serviceId === 'ai-presenter') {
+                return [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Script Writing", role: "Content Writer" },
+                    { label: "L2: Video Editing", role: "Video Editor" },
+                    { label: "Completed", role: "Done" }
+                ];
+            } else if(serviceId === 'product-ads') {
+                return [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Storyboard", role: "AI Creator" },
+                    { label: "L2: Footage Creation", role: "AI Creator", internal: true },
+                    { label: "L3: Video Editing", role: "Video Editor" },
+                    { label: "Completed", role: "Done" }
+                ];
+            } else if(serviceId === 'cinematic-ads') {
+                return [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Storyboard", role: "AI Creator" },
+                    { label: "L2: Footage Creation", role: "AI Creator", internal: true },
+                    { label: "L3: Video Editing", role: "Video Editor" },
+                    { label: "Completed", role: "Done" }
+                ];
+            } else if(serviceId === 'static-posts') {
+                return [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Graphic Design", role: "Graphic Designer" },
+                    { label: "Completed", role: "Done" }
+                ];
+            }
+            return [];
+        }
+
+        function isDateInLastMonth(date) {
+            const now = new Date();
+            let lmYear = now.getFullYear();
+            let lmMonth = now.getMonth() - 1;
+            if (lmMonth < 0) {
+                lmMonth = 11;
+                lmYear -= 1;
+            }
+            return date.getFullYear() === lmYear && date.getMonth() === lmMonth;
+        }
+
+        function renderOrdersTable() {
+            // Calculate stats
+            const isManager = currentUserRole === 'Super Admin' || currentUserRole === 'Project Manager';
+            
+            let ongoingCount = 0;
+            let completedCount = 0;
+            let lastMonthCompletedCount = 0;
+            let poolCount = 0;
+            let totalActiveCount = 0;
+            let totalCompletedCount = 0;
+            let lastMonthTotalCompletedCount = 0;
+            let totalPoolCount = 0;
+            let unverifiedCount = 0;
+
+            allOrders.forEach(o => {
+                const orderIsCompleted = o.status === 'Completed';
+                const orderIsPending = o.status === 'Pending Verification';
+                
+                if (orderIsPending) {
+                    unverifiedCount++;
+                } else {
+                    if (orderIsCompleted) {
+                        totalCompletedCount++;
+                        
+                        let compDate = null;
+                        if (o.completedAt) {
+                            compDate = o.completedAt.toDate ? o.completedAt.toDate() : new Date(o.completedAt);
+                        } else {
+                            compDate = o.createdAt ? (o.createdAt.toDate ? o.createdAt.toDate() : new Date(o.createdAt)) : new Date();
+                        }
+
+                        const inLastMonth = compDate && isDateInLastMonth(compDate);
+                        if (inLastMonth) {
+                            lastMonthTotalCompletedCount++;
+                        }
+
+                        const isContributor = o.contributors && o.contributors.includes(currentUserId);
+                        if (isContributor || o.assignedTo === currentUserId) {
+                            completedCount++;
+                            if (inLastMonth) {
+                                lastMonthCompletedCount++;
+                            }
+                        }
+                    } else {
+                        totalActiveCount++;
+                        if (o.assignedTo === currentUserId) {
+                            ongoingCount++;
+                        }
+                        if (!o.assignedTo) {
+                            totalPoolCount++;
+                            if (o.targetRole === currentUserRole) {
+                                poolCount++;
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Update stats HTML
+            const statsContainer = document.getElementById('team-stats-container');
+            if (statsContainer) {
+                if (isManager) {
+                    statsContainer.innerHTML = `
+                        <div style="flex: 1; background: rgba(0, 163, 255, 0.05); border: 1px solid rgba(0, 163, 255, 0.15); padding: 20px; border-radius: 12px; text-align: left;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Total Active Projects</div>
+                            <div style="font-size: 1.8rem; font-weight: 800; color: #fff;">${totalActiveCount}</div>
+                        </div>
+                        <div style="flex: 1; background: rgba(6, 217, 160, 0.05); border: 1px solid rgba(6, 217, 160, 0.15); padding: 20px; border-radius: 12px; text-align: left;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Total Completed Projects</div>
+                            <div style="font-size: 1.8rem; font-weight: 800; color: var(--secondary);">${totalCompletedCount} <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">(LM: ${lastMonthTotalCompletedCount})</span></div>
+                        </div>
+                        <div style="flex: 1; background: rgba(254, 202, 87, 0.05); border: 1px solid rgba(254, 202, 87, 0.15); padding: 20px; border-radius: 12px; text-align: left;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Unassigned in Pool</div>
+                            <div style="font-size: 1.8rem; font-weight: 800; color: #feca57;">${totalPoolCount}</div>
+                        </div>
+                        <div style="flex: 1; background: rgba(255, 71, 87, 0.05); border: 1px solid rgba(255, 71, 87, 0.15); padding: 20px; border-radius: 12px; text-align: left;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Pending Payments</div>
+                            <div style="font-size: 1.8rem; font-weight: 800; color: #ff4757;">${unverifiedCount}</div>
+                        </div>
+                    `;
+                } else {
+                    statsContainer.innerHTML = `
+                        <div style="flex: 1; background: rgba(0, 163, 255, 0.05); border: 1px solid rgba(0, 163, 255, 0.15); padding: 20px; border-radius: 12px; text-align: left;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">My Ongoing Projects</div>
+                            <div style="font-size: 1.8rem; font-weight: 800; color: #fff;">${ongoingCount}</div>
+                        </div>
+                        <div style="flex: 1; background: rgba(6, 217, 160, 0.05); border: 1px solid rgba(6, 217, 160, 0.15); padding: 20px; border-radius: 12px; text-align: left;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">My Completed Projects</div>
+                            <div style="font-size: 1.8rem; font-weight: 800; color: var(--secondary);">${completedCount} <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">(LM: ${lastMonthCompletedCount})</span></div>
+                        </div>
+                        <div style="flex: 1; background: rgba(254, 202, 87, 0.05); border: 1px solid rgba(254, 202, 87, 0.15); padding: 20px; border-radius: 12px; text-align: left;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">Available to Claim</div>
+                            <div style="font-size: 1.8rem; font-weight: 800; color: #feca57;">${poolCount}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            let pHTML = '';
+            let oHTML = '';
+            let pendingCount = 0;
+
+                    // Fetch and sort locally to avoid Firestore indexing requirements
+                    // Sort by createdAt descending
+                    allOrders.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+                    allOrders.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+                    allOrders.forEach((o) => {
+                        
+                        if (o.status === 'Pending Verification') {
+                            pendingCount++;
+                            pHTML += `
+                                <tr>
+                                    <td style="font-weight: 700; color: var(--primary);">${o.orderNum}</td>
+                                    <td><div style="font-weight: 600;">${o.businessName || 'Client Name'}</div><div style="font-size: 0.8rem; color: var(--text-muted);">${o.clientEmail || 'client@email.com'}</div></td>
+                                    <td>${o.serviceName} - ${o.pkgTitle}</td>
+                                    <td style="font-weight: 700;">${o.price || 'N/A'}</td>
+                                    <td><span class="status-badge status-review">Verification Required</span></td>
+                                    <td style="display: flex; gap: 8px;">
+                                        <button class="btn btn-success" onclick="approvePayment('${o.id}')">Verify</button>
+                                        ${currentUserRole === 'Super Admin' ? `<button class="btn btn-outline" style="border-color: #ff4757; color: #ff4757;" onclick="deleteOrder('${o.id}')">Delete</button>` : ''}
+                                    </td>
+                                </tr>
+                            `;
+                        } else {
+                            const isManager = currentUserRole === 'Super Admin' || currentUserRole === 'Project Manager';
+                            
+                            // Check visibility
+                            let isVisible = false;
+                            if (isManager) {
+                                isVisible = true;
+                            } else if (o.assignedTo === currentUserId) {
+                                isVisible = true;
+                            } else if (!o.assignedTo && o.targetRole === currentUserRole) {
+                                isVisible = true; // Show in pool to claim
+                            }
+
+                            if (!isVisible) return;
+
+                            // Assignment Column HTML
+                            let assignHTML = '';
+                            let actionHTML = '';
+                            
+                            if (isManager) {
+                                let options = '<option value="">Unassigned</option>';
+                                teamMembers.forEach(t => {
+                                    const selected = (o.assignedTo === t.id) ? 'selected' : '';
+                                    options += `<option value="${t.id}" ${selected}>${t.name}</option>`;
+                                });
+                                assignHTML = `
+                                    <select class="form-control" style="padding: 4px 8px; font-size: 0.8rem; background: rgba(255,255,255,0.05);" onchange="assignOrder('${o.id}', this.value)">
+                                        ${options}
+                                    </select>
+                                `;
+                                actionHTML = `
+                                    <button class="btn btn-outline" onclick="window.location.href='admin-project.html?service=${o.serviceId}&pkg=${o.pkgIndex || 0}&order=${o.orderNum}&docId=${o.id}'">Manage</button>
+                                    ${currentUserRole === 'Super Admin' ? `<button class="btn btn-outline" style="border-color: #ff4757; color: #ff4757;" onclick="deleteOrder('${o.id}')">Delete</button>` : ''}
+                                `;
+                            } else {
+                                if (!o.assignedTo && o.targetRole === currentUserRole) {
+                                    assignHTML = '<span style="color: #feca57; font-size: 0.85rem;">Available to Claim</span>';
+                                    actionHTML = `<button class="btn btn-success" onclick="assignOrder('${o.id}', '${currentUserId}')">Accept Order</button>`;
+                                } else {
+                                    assignHTML = '<span style="color: var(--text-muted); font-size: 0.85rem;">Assigned to You</span>';
+                                    const hasUploaded = !!(o.clientDeliverableLink || o.internalAssets);
+                                    const btnText = hasUploaded ? "Edit" : "Upload";
+                                    actionHTML = `<button class="btn btn-outline" onclick="window.location.href='admin-project.html?service=${o.serviceId}&pkg=${o.pkgIndex || 0}&order=${o.orderNum}&docId=${o.id}'">${btnText}</button>`;
+                                }
+                            }
+
+                            // If there are internal assets from a previous stage, show a link
+                            let internalAssetsHTML = '';
+                            if (o.internalAssets && o.assignedTo === currentUserId) {
+                                internalAssetsHTML = `<br><a href="${o.internalAssets}" target="_blank" style="font-size: 0.8rem; color: #feca57; text-decoration: underline;">View Prev Assets</a>`;
+                            }
+
+                            // Determine status badge class
+                            let statusClass = 'status-active';
+                            if (o.status === 'Revision Required') {
+                                statusClass = 'status-error';
+                            } else if (o.status === 'Awaiting Client Approval') {
+                                statusClass = 'status-review';
+                            }
+
+                            oHTML += `
+                                <tr>
+                                    <td style="font-weight: 700; color: var(--primary); cursor: pointer; text-decoration: underline;" onclick="window.location.href='admin-project.html?service=${o.serviceId}&pkg=${o.pkgIndex || 0}&order=${o.orderNum}&docId=${o.id}'">${o.orderNum}</td>
+                                    <td><div style="font-weight: 600;">${o.businessName || 'Client Name'}</div><div style="font-size: 0.8rem; color: var(--text-muted);">${o.clientEmail || 'client@email.com'}</div></td>
+                                    <td>${o.serviceName}${internalAssetsHTML}</td>
+                                    <td><span class="status-badge ${statusClass}">${o.status}</span></td>
+                                    <td>
+                                        ${assignHTML}
+                                    </td>
+                                    <td style="display: flex; gap: 8px; align-items: center;">
+                                        ${actionHTML}
+                                    </td>
+                                </tr>
+                            `;
+                        }
+                    });
+
+                    if(pHTML === '') {
+                        pHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No pending payments.</td></tr>';
+                        document.getElementById('payment-badge').style.display = 'none';
+                    } else {
+                        document.getElementById('payment-badge').style.display = 'inline-block';
+                        document.getElementById('payment-badge').innerText = pendingCount + ' New';
+                    }
+                    document.getElementById('payments-table-body').innerHTML = pHTML;
+
+                    if(oHTML === '') {
+                        if (currentUserRole === 'Super Admin' || currentUserRole === 'Project Manager') {
+                            oHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No active orders on the platform.</td></tr>';
+                        } else {
+                            oHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 40px;">No active orders assigned to you, and no projects available to claim in the pool.</td></tr>';
+                        }
+                    }
+                    document.getElementById('orders-table-body').innerHTML = oHTML;
+        }
+
+        // Logic
+        async function deleteOrder(id) {
+            if (currentUserRole !== 'Super Admin') {
+                alert("Only Super Admins can delete projects.");
+                return;
+            }
+            if (confirm("Are you sure you want to permanently delete this project? This action cannot be undone.")) {
+                try {
+                    await firebase.firestore().collection('orders').doc(id).delete();
+                    if (typeof showToast === 'function') showToast("Project deleted successfully.");
+                } catch(e) {
+                    console.error(e);
+                    alert("Failed to delete project.");
+                }
+            }
+        }
+
+        async function assignOrder(orderId, teamMemberId) {
+            try {
+                console.log("assignOrder called:", orderId, teamMemberId);
+                if (!teamMemberId) {
+                    alert("Error: Team Member ID is empty or invalid.");
+                    return;
+                }
+                await firebase.firestore().collection('orders').doc(orderId).update({
+                    assignedTo: teamMemberId,
+                    contributors: firebase.firestore.FieldValue.arrayUnion(teamMemberId)
+                });
+                if (typeof showToast === 'function') {
+                    showToast("Order assigned successfully.");
+                } else {
+                    alert("Order assigned successfully.");
+                }
+            } catch (e) {
+                console.error("assignOrder error:", e);
+                alert("Failed to assign order: " + e.message);
+            }
+        }
+
+        // Chat Logic
+        let activeChatClientId = null;
+        let unsubscribeActiveChat = null;
+
+        function initAdminThreads() {
+            firebase.firestore().collection('support_threads')
+                .orderBy('lastUpdated', 'desc')
+                .onSnapshot((snapshot) => {
+                    let html = '';
+                    if (snapshot.empty) {
+                        html = '<div style="padding: 24px; color: var(--text-muted); font-size: 0.9rem;">No support messages yet.</div>';
+                    }
+                    snapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const clientEmail = data.clientEmail || doc.id;
+                        const activeClass = activeChatClientId === doc.id ? 'active' : '';
+                        html += `
+                            <div class="thread-item ${activeClass}" onclick="openAdminChat('${doc.id}', '${clientEmail}')">
+                                <div class="thread-title">${clientEmail}</div>
+                                <div class="thread-preview">View messages</div>
+                            </div>
+                        `;
+                    });
+                    document.getElementById('admin-thread-list').innerHTML = html;
+                });
+        }
+
+        function openAdminChat(clientId, clientEmail) {
+            activeChatClientId = clientId;
+            document.getElementById('admin-chat-header').innerText = clientEmail;
+            document.getElementById('admin-chat-input-area').style.display = 'flex';
+            
+            // Highlight active thread visually (re-render)
+            initAdminThreads(); 
+
+            const chatBox = document.getElementById('admin-chat-messages');
+            if (unsubscribeActiveChat) unsubscribeActiveChat();
+
+            unsubscribeActiveChat = firebase.firestore().collection('support_threads').doc(clientId).collection('messages')
+                .orderBy('createdAt', 'asc')
+                .onSnapshot((snapshot) => {
+                    chatBox.innerHTML = '';
+                    snapshot.forEach((doc) => {
+                        const msg = doc.data();
+                        const roleClass = msg.isAdmin ? 'admin' : 'user';
+                        chatBox.innerHTML += `<div class="chat-msg ${roleClass}">${msg.text}</div>`;
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+        }
+
+        async function sendAdminMessage() {
+            if (!activeChatClientId) return;
+            const input = document.getElementById('admin-chat-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            input.value = '';
+
+            try {
+                const threadRef = firebase.firestore().collection('support_threads').doc(activeChatClientId);
+                await threadRef.update({
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                await threadRef.collection('messages').add({
+                    text: msg,
+                    senderId: currentUserId,
+                    senderName: currentUserRole,
+                    isAdmin: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error sending admin message:", error);
+            }
+        }
+
+        async function approvePayment(docId) {
+            try {
+                const doc = await firebase.firestore().collection('orders').doc(docId).get();
+                const currentStage = doc.data().currentStage || 0;
+                let newStatus = 'Awaiting Requirements';
+                if (currentStage >= 1) newStatus = 'Production Level 1';
+
+                await firebase.firestore().collection('orders').doc(docId).update({
+                    status: newStatus
+                });
+                
+                if (typeof showToast === 'function') {
+                    showToast('Payment Verified! Project moved to Active Orders.');
+                } else {
+                    alert(`Payment Verified! Project has been moved to Active Orders.`);
+                }
+            } catch (error) {
+                console.error("Error updating payment status: ", error);
+            }
+        }
+
+        // Modal Logic
+        let activeDocId = null;
+        let activeServiceId = null;
+        let activeCurrentStage = null;
+        let unsubscribeActiveHistory = null;
+
+        function openModal(orderNum, docId, serviceId, currentStage) {
+            document.getElementById('modal-order-id').innerText = orderNum;
+            activeDocId = docId;
+            activeServiceId = serviceId;
+            activeCurrentStage = currentStage;
+            
+            const isRevision = order && order.status === 'Revision Required';
+            const existingLink = isRevision ? '' : (order ? (order.clientDeliverableLink || order.internalAssets || '') : '');
+            const existingNotes = isRevision ? '' : (order ? (order.uploadNotes || '') : '');
+
+            document.getElementById('upload-link').value = existingLink;
+            document.getElementById('upload-notes').value = existingNotes;
+
+            // Handle Revision Notes display
+            const revNotesContainer = document.getElementById('revision-notes-container');
+            const modalRevNotes = document.getElementById('modal-revision-notes');
+            if (revNotesContainer && modalRevNotes) {
+                if (order && order.revisionNotes && order.status === 'Revision Required') {
+                    modalRevNotes.innerText = order.revisionNotes;
+                    revNotesContainer.style.display = 'block';
+                } else {
+                    modalRevNotes.innerText = '';
+                    revNotesContainer.style.display = 'none';
+                }
+            }
+
+            // Listen to history subcollection
+            if (unsubscribeActiveHistory) {
+                unsubscribeActiveHistory();
+                unsubscribeActiveHistory = null;
+            }
+            unsubscribeActiveHistory = firebase.firestore().collection('orders').doc(docId).collection('history')
+                .orderBy('createdAt', 'desc')
+                .onSnapshot((historySnap) => {
+                    renderHistoryTimeline('modal-history-timeline', historySnap);
+                });
+
+            // Update submit button text based on whether it is an edit or new upload
+            const submitBtn = document.getElementById('btn-upload-submit');
+            if (submitBtn) {
+                submitBtn.innerText = existingLink ? "Update & Notify Client" : "Upload & Notify Client";
+            }
+            
+            document.getElementById('uploadModal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('uploadModal').style.display = 'none';
+            if (unsubscribeActiveHistory) {
+                unsubscribeActiveHistory();
+                unsubscribeActiveHistory = null;
+            }
+        }
+
+        function openInviteModal() {
+            document.getElementById('inviteModal').style.display = 'flex';
+        }
+        function closeInviteModal() {
+            document.getElementById('inviteModal').style.display = 'none';
+        }
+
+        async function confirmInvite() {
+            const name = document.getElementById('invite-name').value;
+            const email = document.getElementById('invite-email').value;
+            const role = document.getElementById('invite-role').value;
+
+            if(!name || !email) {
+                alert("Please fill in name and email.");
+                return;
+            }
+
+            try {
+                await firebase.firestore().collection('team').add({
+                    name: name,
+                    email: email,
+                    role: role,
+                    assignedProjects: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                closeInviteModal();
+                document.getElementById('invite-name').value = '';
+                document.getElementById('invite-email').value = '';
+            } catch(e) {
+                console.error(e);
+                alert("Failed to add team member.");
+            }
+        }
+
+        async function deleteTeamMember(id) {
+            if(confirm("Are you sure you want to remove this team member?")) {
+                try {
+                    await firebase.firestore().collection('team').doc(id).delete();
+                } catch(e) {
+                    console.error(e);
+                    alert("Failed to remove team member.");
+                }
+            }
+        }
+
+        async function confirmUpload() {
+            if (!activeDocId) return;
+            const link = document.getElementById('upload-link').value.trim();
+            if(!link) { alert("Please provide a link."); return; }
+            const notes = document.getElementById('upload-notes').value.trim();
+
+            const submitBtn = document.getElementById('btn-upload-submit');
+            let originalText = "Upload & Notify Client";
+            if (submitBtn) {
+                originalText = submitBtn.innerText;
+                submitBtn.disabled = true;
+                submitBtn.innerText = "Processing...";
+                submitBtn.style.opacity = "0.7";
+                submitBtn.style.cursor = "not-allowed";
+            }
+
+            const workflows = getWorkflowLevels(activeServiceId);
+            const currentLevel = workflows[activeCurrentStage];
+            const isInternal = currentLevel && currentLevel.internal;
+
+            try {
+                if (isInternal) {
+                    const nextStage = activeCurrentStage + 1;
+                    const nextRole = workflows[nextStage] ? workflows[nextStage].role : "Done";
+
+                    await firebase.firestore().collection('orders').doc(activeDocId).update({
+                        internalAssets: link,
+                        uploadNotes: notes,
+                        currentStage: nextStage,
+                        targetRole: nextRole,
+                        assignedTo: null
+                    });
+
+                    const uName = document.getElementById('admin-user-name') ? document.getElementById('admin-user-name').innerText : 'Team';
+                    await firebase.firestore().collection('orders').doc(activeDocId).collection('history').add({
+                        type: 'upload',
+                        stageLabel: currentLevel.label + " (Internal Submission)",
+                        link: link,
+                        notes: notes,
+                        userName: `${uName} (${currentUserRole})`,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    if (typeof showToast === 'function') showToast("Internal assets submitted.");
+                    else alert("Internal assets submitted to the next role.");
+                } else {
+                    const order = allOrders.find(o => o.id === activeDocId);
+                    const isUpdate = !!(order && order.clientDeliverableLink);
+
+                    await firebase.firestore().collection('orders').doc(activeDocId).update({
+                        status: 'Awaiting Client Approval',
+                        clientDeliverableLink: link,
+                        uploadNotes: notes,
+                        revisionNotes: firebase.firestore.FieldValue.delete()
+                    });
+
+                    const uName = document.getElementById('admin-user-name') ? document.getElementById('admin-user-name').innerText : 'Team';
+                    await firebase.firestore().collection('orders').doc(activeDocId).collection('history').add({
+                        type: 'upload',
+                        stageLabel: currentLevel.label,
+                        link: link,
+                        notes: notes,
+                        userName: `${uName} (${currentUserRole})`,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+
+                    let msgText = isUpdate
+                        ? 'The creative team has updated the deliverables for review! Please check the project page.'
+                        : 'The creative team has submitted new deliverables for review! Please check the project page.';
+                    if (notes) {
+                        msgText += '\n\nNotes:\n' + notes;
+                    }
+
+                    await firebase.firestore().collection('orders').doc(activeDocId).collection('messages').add({
+                        text: msgText,
+                        senderId: 'system',
+                        senderName: 'System',
+                        isAdmin: true,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    const successMsg = isUpdate 
+                        ? "Deliverables Updated Successfully! Client has been notified."
+                        : "Deliverables Uploaded Successfully! Client has been notified.";
+                    if (typeof showToast === 'function') showToast(successMsg);
+                    else alert(successMsg);
+                }
+                
+                closeModal();
+            } catch(e) {
+                console.error(e);
+                alert("Upload failed.");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
+                    submitBtn.style.opacity = "";
+                    submitBtn.style.cursor = "";
+                }
+            }
+        }
+
+        function renderHistoryTimeline(containerId, snapshot) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; padding: 12px; text-align: center;">No activity recorded yet.</div>';
+                return;
+            }
+
+            let html = '';
+            snapshot.forEach((doc) => {
+                const event = doc.data();
+                const dateText = event.createdAt ? new Date(event.createdAt.seconds * 1000).toLocaleString() : 'Just now';
+                
+                let icon = 'ℹ️';
+                let title = 'Activity Logged';
+                let iconBg = 'rgba(255,255,255,0.03)';
+                let notesHTML = '';
+                
+                if (event.type === 'requirements') {
+                    icon = '📝';
+                    title = 'Requirements Submitted';
+                    iconBg = 'rgba(0, 163, 255, 0.1)';
+                } else if (event.type === 'upload') {
+                    icon = '📁';
+                    title = `${event.stageLabel || 'Deliverables'} Submitted`;
+                    iconBg = 'rgba(6, 217, 160, 0.1)';
+                    if (event.link) {
+                        notesHTML += `<div style="margin-top: 6px;"><a href="${event.link}" target="_blank" style="color: var(--primary); font-size: 0.8rem; text-decoration: underline;">View Uploaded Files ↗</a></div>`;
+                    }
+                } else if (event.type === 'revision') {
+                    icon = '🔄';
+                    title = `Revision Requested (${event.stageLabel || 'Milestone'})`;
+                    iconBg = 'rgba(255, 71, 87, 0.1)';
+                } else if (event.type === 'approval') {
+                    icon = '✅';
+                    title = `${event.stageLabel || 'Milestone'} Approved`;
+                    iconBg = 'rgba(6, 217, 160, 0.15)';
+                }
+                
+                if (event.notes) {
+                    notesHTML += `
+                        <div style="margin-top: 8px; background: rgba(0,0,0,0.15); border-left: 2px solid rgba(255,255,255,0.15); padding: 8px 12px; border-radius: 4px; font-size: 0.85rem; color: #fff; white-space: pre-wrap;">${event.notes}</div>
+                    `;
+                }
+
+                html += `
+                    <div style="display: flex; gap: 12px; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                        <div style="font-size: 1.1rem; background: ${iconBg}; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">${icon}</div>
+                        <div style="flex-grow: 1; overflow: hidden;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                                <span style="font-weight: 700; color: #fff; font-size: 0.85rem;">${title}</span>
+                                <span style="font-size: 0.7rem; color: var(--text-muted); white-space: nowrap;">${dateText}</span>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">by ${event.userName || 'System'}</div>
+                            ${notesHTML}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        // Init
+        // renderData() is now called in onAuthStateChanged
+    </script>
+</body>
+</html>

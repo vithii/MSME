@@ -1,0 +1,1188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Workspace | MSMEgrowth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 14, 23, 0.95);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon {
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+        }
+
+        .main-view {
+            flex-grow: 1;
+            margin-left: 280px;
+            padding: 40px 48px;
+            min-height: 100vh;
+            display: flex;
+            gap: 32px;
+        }
+
+        .workspace-main {
+            flex-grow: 1;
+        }
+
+        .workspace-sidebar {
+            width: 320px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Progress Tracker (Horizontal) */
+        .progress-track {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            margin-bottom: 48px;
+            margin-top: 32px;
+        }
+        .progress-track::before {
+            content: '';
+            position: absolute;
+            top: 14px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            z-index: 0;
+        }
+        .progress-step {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .step-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--bg-dark);
+            border: 2px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+        .progress-step.completed .step-dot {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0, 163, 255, 0.4);
+        }
+        .progress-step.active .step-dot {
+            background: rgba(6, 217, 160, 0.2);
+            border-color: var(--secondary);
+            color: var(--secondary);
+            box-shadow: 0 0 15px rgba(6, 217, 160, 0.3);
+        }
+        .step-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            max-width: 120px;
+            line-height: 1.4;
+        }
+        .progress-step.completed .step-label, .progress-step.active .step-label {
+            color: #fff;
+        }
+
+        /* Panels */
+        .panel {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+        .panel-header {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Forms */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.9);
+        }
+        .form-control {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+        .btn-success {
+            background: var(--secondary);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Chat Widget */
+        .chat-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .chat-messages {
+            flex-grow: 1;
+            padding: 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chat-msg {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        .chat-msg.admin {
+            background: rgba(255,255,255,0.05);
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+        }
+        .chat-msg.user {
+            background: rgba(0, 163, 255, 0.2);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        .chat-input {
+            display: flex;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        .chat-input input {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 16px;
+            color: #fff;
+        }
+        .chat-input input:focus { outline: none; }
+        .chat-input button {
+            background: transparent;
+            color: var(--primary);
+            border: none;
+            font-weight: 700;
+            padding: 0 16px;
+            cursor: pointer;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .modal {
+            background: rgba(15, 18, 25, 1);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <a href="index.html" class="nav-logo" style="margin-bottom: 48px; display: block;">MSME<span style="color: var(--primary);">growth</span></a>
+            
+            <nav style="flex-grow: 1;">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">⚡</span> Active Dashboard
+                </a>
+                <a href="services.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">🛍️</span> Service Catalog
+                </a>
+                <a href="courses.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">🎓</span> My Masterclasses
+                </a>
+                <a href="messages.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">💬</span> Messages 
+                </a>
+            </nav>
+
+            <a href="#" class="nav-item" style="margin-bottom: 0;" onclick="firebase.auth().signOut().then(() => window.location.href='login.html')">
+                <span class="nav-icon" style="font-size: 1.2rem;">🚪</span> Sign Out
+            </a>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-view">
+            
+            <!-- Left Workspace -->
+            <div class="workspace-main">
+                
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px;">
+                    <div>
+                        <div style="font-size: 0.85rem; color: var(--secondary); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 8px;" id="project-order-num">#ORD-XXXX</div>
+                        <h1 style="font-size: 2.2rem; font-weight: 800;" id="project-title">Loading Project...</h1>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 4px;">Status</div>
+                        <div style="background: rgba(254, 202, 87, 0.1); color: #feca57; padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block;" id="project-status">Awaiting Requirements</div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Progress Tracker -->
+                <div class="progress-track" id="progress-tracker">
+                    <!-- Injected by JS -->
+                </div>
+
+                <!-- Interactive Panel Area -->
+                <div class="panel" id="action-panel">
+                    <!-- Injected by JS -->
+                </div>
+
+                <!-- Project History Panel -->
+                <div class="panel" style="padding: 24px; margin-top: 24px;">
+                    <div class="panel-header" style="margin-bottom: 16px; font-size: 1.1rem; display: flex; align-items: center; gap: 8px;">
+                        <span>📋</span> Project Timeline & History
+                    </div>
+                    <div id="project-history-timeline" style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="color: var(--text-muted); font-size: 0.9rem;">No history recorded yet.</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Right Sidebar (Metadata & Chat) -->
+            <div class="workspace-sidebar">
+                
+                <div class="panel" style="padding: 24px;">
+                    <div class="panel-header" style="margin-bottom: 16px; font-size: 1rem;">Project Details</div>
+                    <div style="margin-bottom: 12px; display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">Estimated Delivery</span>
+                        <span style="font-weight: 700; font-size: 0.85rem;" id="project-eta">TBD</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted); font-size: 0.85rem;">Package</span>
+                        <span style="font-weight: 700; font-size: 0.85rem; color: var(--primary);" id="project-pkg">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="panel" style="padding: 24px; flex-grow: 1; display: flex; flex-direction: column;">
+                    <div class="panel-header" style="margin-bottom: 16px; font-size: 1rem;">Project Chat</div>
+                    <div class="chat-box" style="flex-grow: 1;">
+                        <div class="chat-messages" id="chat-messages">
+                            <div class="chat-msg admin">Hello! Welcome to your project workspace. Please submit the requirements form so we can get started!</div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" placeholder="Type a message..." id="chat-input-field" onkeypress="handleChatEnter(event)">
+                            <button onclick="sendChatMessage()">Send</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel" style="padding: 24px;">
+                    <div class="panel-header" style="margin-bottom: 16px; font-size: 1rem;">Deliverables</div>
+                    <div id="deliverables-container" style="border: 1px dashed rgba(255,255,255,0.2); border-radius: 8px; padding: 24px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+                        Deliverables will appear here once a milestone is completed.
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- MODAL: REQUEST REVISION -->
+    <div class="modal-overlay" id="revisionModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 style="font-size: 1.5rem; color: #fff;">Request Revision</h2>
+                <button style="background: transparent; border: none; color: #fff; font-size: 1.5rem; cursor: pointer;" onclick="closeRevisionModal()">×</button>
+            </div>
+            
+            <p style="color: var(--text-muted); margin-bottom: 24px;">Please describe what you would like the team to modify or fix for this milestone.</p>
+
+            <div style="margin-bottom: 32px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9rem; color: #fff;">Revision Notes</label>
+                <textarea id="revision-notes" style="width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); color: #fff; padding: 12px; border-radius: 8px; font-family: inherit;" rows="4" placeholder="e.g. Please change the script tone to be more professional..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 16px; justify-content: flex-end;">
+                <button class="btn-primary" style="background: transparent; border: 1px solid rgba(255,255,255,0.2); color: #fff; width: auto; padding: 8px 16px;" onclick="closeRevisionModal()">Cancel</button>
+                <button class="btn-success" id="btn-revision-submit" style="width: auto; padding: 8px 24px; font-weight: 700;" onclick="submitRevision()">Submit Revision Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/services-data.js"></script>
+
+    <script>
+        // Global variables for URL params so they can be accessed anywhere
+        let urlParams, serviceId, pkgIndex, orderNum, docIdParam, docId, service, currentPackage;
+
+        // Check Authentication
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                if (typeof hideAuthLoader === 'function') hideAuthLoader();
+                
+                // Load specific service details from URL AFTER auth resolves
+                urlParams = new URLSearchParams(window.location.search);
+                serviceId = urlParams.get('service');
+                pkgIndex = parseInt(urlParams.get('pkg'));
+                orderNum = urlParams.get('order') || '#ORD-DEMO';
+                docIdParam = urlParams.get('docId');
+                docId = (docIdParam && docIdParam !== 'null' && docIdParam !== 'undefined' && docIdParam.trim() !== '') ? docIdParam : null;
+                
+                service = servicesData[serviceId];
+                currentPackage = null;
+
+                if (service && service.packages[pkgIndex]) {
+                    currentPackage = service.packages[pkgIndex];
+                    document.getElementById('project-title').innerText = service.name;
+                    document.getElementById('project-order-num').innerText = orderNum;
+                    document.getElementById('project-pkg').innerText = currentPackage.title;
+                    document.getElementById('project-eta').innerText = currentPackage.delivery;
+                    
+                    initWorkspace(serviceId, docId, orderNum);
+                } else {
+                    alert("Invalid project parameters.");
+                    window.location.href = "dashboard.html";
+                }
+            }
+        });
+
+        // Global State
+        let currentStage = 0; // 0 = Requirements, 1 = Level 1, etc.
+        let workflowLevels = [];
+
+        function initWorkspace(serviceId, docId, orderNum) {
+            // Define workflows based on user rules
+            if(serviceId === 'ai-presenter') {
+                workflowLevels = [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Script Writing", role: "Content Writer" },
+                    { label: "L2: Video Editing", role: "Video Editor" },
+                    { label: "Completed", role: "Done" }
+                ];
+            } else if(serviceId === 'product-ads') {
+                workflowLevels = [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Storyboard", role: "AI Creator" },
+                    { label: "L2: Footage Creation", role: "AI Creator", internal: true },
+                    { label: "L3: Video Editing", role: "Video Editor" },
+                    { label: "Completed", role: "Done" }
+                ];
+            } else if(serviceId === 'cinematic-ads') {
+                workflowLevels = [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Storyboard", role: "AI Creator" },
+                    { label: "L2: Footage Creation", role: "AI Creator", internal: true },
+                    { label: "L3: Video Editing", role: "Video Editor" },
+                    { label: "Completed", role: "Done" }
+                ];
+            } else if(serviceId === 'static-posts') {
+                workflowLevels = [
+                    { label: "Requirements", role: "Client" },
+                    { label: "L1: Graphic Design", role: "Graphic Designer" },
+                    { label: "Completed", role: "Done" }
+                ];
+            }
+
+            if (docId) {
+                attachFirestoreListener(docId);
+            } else if (orderNum) {
+                // Fallback for URLs missing docId
+                firebase.firestore().collection('orders').where('orderNum', '==', orderNum).get().then(snapshot => {
+                    if (!snapshot.empty) {
+                        const actualDocId = snapshot.docs[0].id;
+                        docId = actualDocId;
+                        attachFirestoreListener(actualDocId);
+                    } else {
+                        document.getElementById('action-panel').innerHTML = '<div class="panel-header">Order Not Found</div><p>Could not locate this order in the database.</p>';
+                    }
+                }).catch(error => {
+                    document.getElementById('action-panel').innerHTML = '<div class="panel-header" style="color:red;">Database Error</div><p>' + error.message + '</p>';
+                });
+            } else {
+                document.getElementById('action-panel').innerHTML = '<div class="panel-header">Invalid Link</div><p>Order ID is missing.</p>';
+            }
+        }
+
+        function attachFirestoreListener(targetDocId) {
+            try {
+                if (!targetDocId || targetDocId === 'null') {
+                    document.getElementById('action-panel').innerHTML = '<div class="panel-header">Invalid Database ID</div><p>Cannot listen to a missing document.</p>';
+                    return;
+                }
+                firebase.firestore().collection('orders').doc(targetDocId).onSnapshot((doc) => {
+                    try {
+                        if(doc.exists) {
+                            const data = doc.data();
+                            currentStage = data.currentStage || 0;
+                            
+                            updateProgressTracker();
+
+                            // Update Deliverables Card
+                            const deliverablesContainer = document.getElementById('deliverables-container');
+                            if (deliverablesContainer) {
+                                if (data.clientDeliverableLink) {
+                                    deliverablesContainer.innerHTML = `
+                                        <div style="display: flex; align-items: center; gap: 12px; text-align: left; background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                                            <div style="font-size: 1.5rem;">📁</div>
+                                            <div style="flex-grow: 1; overflow: hidden;">
+                                                <div style="font-weight: 600; color: #fff; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;">Milestone Deliverables</div>
+                                                <a href="${data.clientDeliverableLink}" target="_blank" style="color: var(--primary); font-size: 0.8rem; text-decoration: underline;">View Files ↗</a>
+                                            </div>
+                                        </div>
+                                    `;
+                                    deliverablesContainer.style.border = "none";
+                                    deliverablesContainer.style.padding = "0";
+                                } else {
+                                    deliverablesContainer.innerHTML = `Deliverables will appear here once a milestone is completed.`;
+                                    deliverablesContainer.style.border = "1px dashed rgba(255,255,255,0.2)";
+                                    deliverablesContainer.style.padding = "24px";
+                                }
+                            }
+
+                            const statusEl = document.getElementById('project-status');
+                            
+                            if (currentStage === 0) {
+                                statusEl.innerText = "Requirements Pending";
+                                statusEl.style.background = "rgba(254, 202, 87, 0.1)";
+                                statusEl.style.color = "#feca57";
+                                
+                                // Render correct form
+                                if(serviceId === 'ai-presenter') renderRequirementsForm_AIPresenter(targetDocId);
+                                else if(serviceId === 'product-ads') renderRequirementsForm_ProductAd(targetDocId);
+                                else if(serviceId === 'cinematic-ads') renderRequirementsForm_CinematicAd(targetDocId);
+                                else if(serviceId === 'static-posts') renderRequirementsForm_StaticPosts(targetDocId);
+                            } else if (data.status === "Pending Verification") {
+                                statusEl.innerText = "Payment Verifying";
+                                statusEl.style.background = "rgba(254, 202, 87, 0.1)";
+                                statusEl.style.color = "#feca57";
+                                
+                                document.getElementById('action-panel').innerHTML = `
+                                    <div class="panel-header">💳 Payment Verification Pending</div>
+                                    <p style="color: var(--text-muted); margin-bottom: 24px;">Thank you for submitting your requirements! Your project is locked in. We are currently verifying your payment. Once approved, our team will begin work on Level 1.</p>
+                                    
+                                    <div style="background: rgba(255, 215, 0, 0.05); border: 1px dashed rgba(255, 215, 0, 0.3); padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
+                                        <div style="font-size: 2.5rem; margin-bottom: 12px;">⏳</div>
+                                        <div style="color: #FFD700; font-weight: 700; font-size: 1.1rem;">Waiting for Admin Approval...</div>
+                                    </div>
+                                `;
+                            } else if (data.status === "Awaiting Client Approval") {
+                                statusEl.innerText = "Action Required";
+                                statusEl.style.background = "rgba(254, 202, 87, 0.1)";
+                                statusEl.style.color = "#feca57";
+                                renderApprovalUI(data.clientDeliverableLink, data.uploadNotes);
+                            } else if (currentStage >= workflowLevels.length - 1) {
+                                statusEl.innerText = "Completed";
+                                statusEl.style.background = "rgba(6, 217, 160, 0.1)";
+                                statusEl.style.color = "var(--secondary)";
+                                renderCompletedUI(data.clientDeliverableLink);
+                            } else {
+                                statusEl.innerText = data.status || "In Production";
+                                if (data.status === "Revision Required") {
+                                    statusEl.style.background = "rgba(255, 71, 87, 0.1)";
+                                    statusEl.style.color = "#ff4757";
+                                } else {
+                                    statusEl.style.background = "rgba(0, 163, 255, 0.1)";
+                                    statusEl.style.color = "var(--primary)";
+                                }
+                                
+                                // Render in progress state
+                                renderLockedUI();
+                            }
+                        } else {
+                            document.getElementById('action-panel').innerHTML = '<div class="panel-header">Order Not Found</div><p style="color: var(--text-muted);">This order could not be found in the database. It may have been deleted.</p>';
+                        }
+                    } catch (e) {
+                        document.getElementById('action-panel').innerHTML = '<div class="panel-header" style="color:red;">Javascript Error</div><p>' + e.message + '</p><pre style="font-size:10px;color:#aaa;">' + e.stack + '</pre>';
+                    }
+                });
+
+                // Listen to history subcollection
+                firebase.firestore().collection('orders').doc(targetDocId).collection('history')
+                    .orderBy('createdAt', 'desc')
+                    .onSnapshot((historySnap) => {
+                        renderHistoryTimeline('project-history-timeline', historySnap);
+                    });
+            } catch (err) {
+                document.getElementById('action-panel').innerHTML = '<div class="panel-header" style="color:red;">Sync Error</div><p>' + err.message + '</p>';
+            }
+        }
+
+        function renderLockedUI() {
+            document.getElementById('action-panel').innerHTML = `
+                <div class="panel-header">🎬 ${workflowLevels[currentStage].label} <span style="font-size: 0.8rem; font-weight: 500; color: #fff; background: rgba(0, 163, 255, 0.2); padding: 4px 8px; border-radius: 4px;">In Progress</span></div>
+                <p style="color: var(--text-muted); margin-bottom: 24px;">Our team is currently working on this milestone. Requirements are locked. Once the assets are uploaded, you will be able to review and approve them here.</p>
+                
+                <div style="background: rgba(254, 202, 87, 0.05); border: 1px dashed rgba(254, 202, 87, 0.3); padding: 24px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
+                    <div style="font-size: 2rem; margin-bottom: 12px;">🚧</div>
+                    <div style="color: #feca57; font-weight: 700;">Waiting for Admin Upload...</div>
+                </div>
+            `;
+        }
+        
+        function renderCompletedUI(link) {
+            document.getElementById('action-panel').innerHTML = `
+                <div class="panel-header">🎉 Project Completed!</div>
+                <p style="color: var(--text-muted); margin-bottom: 24px;">Your final assets have been delivered. Thank you for choosing MSMEgrowth!</p>
+                
+                <div style="background: rgba(6, 217, 160, 0.05); border: 1px solid rgba(6, 217, 160, 0.2); padding: 24px; border-radius: 12px; margin-bottom: 24px; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 12px;">✅</div>
+                    <h3 style="font-size: 1.2rem; color: var(--secondary); margin-bottom: 8px;">Final Delivery Available</h3>
+                    <button class="btn-success" style="max-width: 250px;" onclick="window.open('${link || '#'}', '_blank')">Download Final Assets</button>
+                </div>
+            `;
+        }
+
+        function renderApprovalUI(link, notes) {
+            let notesHTML = '';
+            if (notes) {
+                notesHTML = `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 16px; border-radius: 8px; margin-bottom: 24px; text-align: left;">
+                        <div style="font-weight: 700; color: #feca57; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">Notes from Team</div>
+                        <p style="color: var(--text-main); font-size: 0.95rem; margin: 0; white-space: pre-wrap;">${notes}</p>
+                    </div>
+                `;
+            }
+
+            document.getElementById('action-panel').innerHTML = `
+                <div class="panel-header">👀 ${workflowLevels[currentStage].label} <span style="font-size: 0.8rem; font-weight: 500; color: #feca57; background: rgba(254, 202, 87, 0.1); padding: 4px 8px; border-radius: 4px;">Action Required</span></div>
+                <p style="color: var(--text-muted); margin-bottom: 24px;">The deliverables for this milestone are ready for your review. Please check the links below and approve if satisfied, or request revisions in the chat.</p>
+                
+                ${notesHTML}
+
+                <div style="background: rgba(0, 163, 255, 0.05); border: 1px solid rgba(0, 163, 255, 0.2); padding: 20px; border-radius: 8px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px;">
+                    <div style="font-size: 2rem;">📁</div>
+                    <div style="text-align: left;">
+                        <div style="font-weight: 700; color: #fff;">Milestone Assets (Google Drive)</div>
+                        <a href="${link || '#'}" target="_blank" style="color: var(--primary); font-size: 0.9rem; text-decoration: underline;">View Files ↗</a>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px;">
+                    <button class="btn-success" style="flex: 2; padding: 12px; font-weight: bold;" onclick="approveMilestone()">✅ Approve & Proceed to Next Level</button>
+                    <button class="btn-primary" style="flex: 1; background: transparent; border: 1px solid rgba(255,255,255,0.2); padding: 12px; font-weight: bold; color: var(--text-muted);" onclick="openRevisionModal()">Request Revision</button>
+                </div>
+            `;
+        }
+
+        function updateProgressTracker() {
+            let html = '';
+            workflowLevels.forEach((level, index) => {
+                if (level.internal) return; // Hide internal stages from client
+
+                let statusClass = '';
+                let icon = '○';
+                if(index < currentStage) {
+                    statusClass = 'completed';
+                    icon = '✓';
+                } else if(index === currentStage || (level.internal && index < currentStage)) {
+                    // Note: Since internal is hidden, if we are currently ON an internal stage,
+                    // we show the NEXT stage as 'active' or keep the previous one active.
+                    // Actually, if currentStage is internal (e.g. 2), the client should see
+                    // "L3: Video Editing" as the next thing.
+                }
+
+                // Proper logic for handling current active state when internal stages exist
+                let isActive = false;
+                let isCompleted = false;
+
+                if (currentStage > index) {
+                    isCompleted = true;
+                } else if (currentStage === index) {
+                    isActive = true;
+                } else {
+                    // Check if current stage is internal and this is the next visible stage
+                    let checkStage = currentStage;
+                    while (workflowLevels[checkStage] && workflowLevels[checkStage].internal) {
+                        checkStage++;
+                    }
+                    if (checkStage === index) isActive = true;
+                }
+
+                if (isCompleted) {
+                    statusClass = 'completed';
+                    icon = '✓';
+                } else if (isActive) {
+                    statusClass = 'active';
+                    icon = '●';
+                }
+
+                html += `
+                    <div class="progress-step ${statusClass}">
+                        <div class="step-dot">${icon}</div>
+                        <div class="step-label">${level.label}</div>
+                    </div>
+                `;
+            });
+            document.getElementById('progress-tracker').innerHTML = html;
+        }
+
+        // --- REQUIREMENT FORMS ---
+
+        function renderRequirementsForm_AIPresenter(targetDocId) {
+            document.getElementById('action-panel').innerHTML = `
+                <div class="panel-header">📝 Service Requirements <span style="font-size: 0.8rem; font-weight: 500; color: var(--secondary); background: rgba(6, 217, 160, 0.1); padding: 4px 8px; border-radius: 4px;">Action Required</span></div>
+                <p style="color: var(--text-muted); margin-bottom: 24px;">Please provide the specific details required for your AI Presenter videos so we can begin Level 1.</p>
+                
+                <div class="form-group">
+                    <label class="form-label">AI Presenter Appearance</label>
+                    <input type="text" id="req-appearance" class="form-control" placeholder="e.g. Female, Business Suit, Brown Skin">
+                </div>
+                
+                <div style="display: flex; gap: 24px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Language</label>
+                        <select id="req-language" class="form-control">
+                            <option>English</option>
+                            <option>Tamil</option>
+                            <option>Sinhala</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Tone</label>
+                        <select id="req-tone" class="form-control">
+                            <option>Professional</option>
+                            <option>Friendly</option>
+                            <option>Luxury</option>
+                            <option>Energetic</option>
+                            <option>Funny</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label class="form-label">Aspect Ratio</label>
+                        <select id="req-ratio" class="form-control">
+                            <option>9:16 (Reels/TikTok)</option>
+                            <option>16:9 (YouTube)</option>
+                            <option>1:1 (Instagram Feed)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Brand Assets (Google Drive Folder - Logo, Fonts, etc.)</label>
+                    <input type="text" id="req-assets" class="form-control" placeholder="Paste Google Drive link">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Additional Instructions</label>
+                    <textarea id="req-notes" class="form-control" rows="3" placeholder="e.g. Keep under 45 seconds, use company colours..."></textarea>
+                </div>
+
+                <button class="btn-primary" style="margin-top: 16px;" onclick="submitRequirements('ai-presenter', '${targetDocId}')">Submit Requirements & Lock 🔒</button>
+            `;
+        }
+
+        function renderRequirementsForm_ProductAd(targetDocId) {
+            document.getElementById('action-panel').innerHTML = `
+                <div class="panel-header">📝 Service Requirements <span style="font-size: 0.8rem; font-weight: 500; color: var(--secondary); background: rgba(6, 217, 160, 0.1); padding: 4px 8px; border-radius: 4px;">Action Required</span></div>
+                
+                <div class="form-group"><label class="form-label">Product Name</label><input type="text" id="req-name" class="form-control"></div>
+                <div class="form-group"><label class="form-label">Product Description</label><textarea id="req-desc" class="form-control" rows="2"></textarea></div>
+                <div class="form-group"><label class="form-label">Key Selling Points</label><input type="text" id="req-points" class="form-control" placeholder="e.g. Waterproof, Handmade, Lifetime Warranty, Organic"></div>
+                
+                <div style="display: flex; gap: 24px;">
+                    <div class="form-group" style="flex: 1;"><label class="form-label">Product Images (Drive Link)</label><input type="text" id="req-images" class="form-control"></div>
+                    <div class="form-group" style="flex: 1;"><label class="form-label">Logo (Drive Link)</label><input type="text" id="req-logo" class="form-control"></div>
+                </div>
+
+                <div class="form-group"><label class="form-label">Call To Action</label><input type="text" id="req-cta" class="form-control" placeholder="e.g. Shop Now, Visit Website"></div>
+                <div class="form-group"><label class="form-label">Additional Notes</label><textarea id="req-notes" class="form-control" rows="2" placeholder="e.g. Luxury style with a black background."></textarea></div>
+
+                <button class="btn-primary" style="margin-top: 16px;" onclick="submitRequirements('product-ads', '${targetDocId}')">Submit Requirements & Lock 🔒</button>
+            `;
+        }
+
+        function renderRequirementsForm_CinematicAd(targetDocId) {
+            document.getElementById('action-panel').innerHTML = `
+                <div class="panel-header">📝 Service Requirements <span style="font-size: 0.8rem; font-weight: 500; color: var(--secondary); background: rgba(6, 217, 160, 0.1); padding: 4px 8px; border-radius: 4px;">Action Required</span></div>
+                
+                <div class="form-group"><label class="form-label">Project Goal</label><input type="text" id="req-goal" class="form-control" placeholder="e.g. Brand Awareness, Product Launch, Event Promotion"></div>
+                <div class="form-group"><label class="form-label">Storyline Idea</label><textarea id="req-story" class="form-control" rows="2" placeholder="e.g. Customer discovers product and experiences transformation..."></textarea></div>
+                
+                <div style="display: flex; gap: 24px;">
+                    <div class="form-group" style="flex: 1;"><label class="form-label">Mood / Style</label><input type="text" id="req-mood" class="form-control" placeholder="e.g. Luxury, Cinematic, Dark, Fast-Paced"></div>
+                    <div class="form-group" style="flex: 1;"><label class="form-label">Music Style</label><input type="text" id="req-music" class="form-control" placeholder="e.g. Epic, Corporate, Calm, Emotional"></div>
+                </div>
+
+                <div style="display: flex; gap: 24px;">
+                    <div class="form-group" style="flex: 1;"><label class="form-label">Product Images (Drive Link)</label><input type="text" id="req-images" class="form-control"></div>
+                    <div class="form-group" style="flex: 1;"><label class="form-label">Logo (Drive Link)</label><input type="text" id="req-logo" class="form-control"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Additional Notes</label><textarea id="req-notes" class="form-control" rows="2" placeholder="e.g. Use slow-motion shots with premium transitions."></textarea></div>
+
+                <button class="btn-primary" style="margin-top: 16px;" onclick="submitRequirements('cinematic-ads', '${targetDocId}')">Submit Requirements & Lock 🔒</button>
+            `;
+        }
+
+        function renderRequirementsForm_StaticPosts(targetDocId) {
+            document.getElementById('action-panel').innerHTML = `
+                <div class="panel-header">📝 Service Requirements <span style="font-size: 0.8rem; font-weight: 500; color: var(--secondary); background: rgba(6, 217, 160, 0.1); padding: 4px 8px; border-radius: 4px;">Action Required</span></div>
+                
+                <div class="form-group"><label class="form-label">Content Topics</label><input type="text" id="req-topics" class="form-control" placeholder="e.g. Educational, Quotes, Offers, Testimonials"></div>
+                
+                <div style="display: flex; gap: 24px;">
+                    <div class="form-group" style="flex: 1;"><label class="form-label">Language</label>
+                        <select id="req-language" class="form-control"><option>English</option><option>Tamil</option><option>Sinhala</option></select>
+                    </div>
+                    <div class="form-group" style="flex: 1;"><label class="form-label">Captions Required?</label>
+                        <select id="req-captions" class="form-control"><option>Yes</option><option>No</option></select>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 24px;">
+                    <div class="form-group" style="flex: 1;"><label class="form-label">Product Images (Drive Link)</label><input type="text" id="req-images" class="form-control"></div>
+                    <div class="form-group" style="flex: 1;"><label class="form-label">Logo (Drive Link)</label><input type="text" id="req-logo" class="form-control"></div>
+                </div>
+                <div class="form-group"><label class="form-label">Additional Notes</label><textarea id="req-notes" class="form-control" rows="2" placeholder="e.g. Modern minimal style using black and gold."></textarea></div>
+
+                <button class="btn-primary" style="margin-top: 16px;" onclick="submitRequirements('static-posts', '${targetDocId}')">Submit Requirements & Lock 🔒</button>
+            `;
+        }
+
+        // --- SIMULATION LOGIC ---
+
+        async function submitRequirements(type, targetDocId) {
+            let reqs = {};
+            
+            if(type === 'ai-presenter') {
+                reqs = {
+                    appearance: document.getElementById('req-appearance').value,
+                    language: document.getElementById('req-language').value,
+                    tone: document.getElementById('req-tone').value,
+                    ratio: document.getElementById('req-ratio').value,
+                    assets: document.getElementById('req-assets').value,
+                    notes: document.getElementById('req-notes').value
+                };
+            } else if(type === 'product-ads') {
+                reqs = {
+                    name: document.getElementById('req-name').value,
+                    desc: document.getElementById('req-desc').value,
+                    points: document.getElementById('req-points').value,
+                    images: document.getElementById('req-images').value,
+                    logo: document.getElementById('req-logo').value,
+                    cta: document.getElementById('req-cta').value,
+                    notes: document.getElementById('req-notes').value
+                };
+            } else if(type === 'cinematic-ads') {
+                reqs = {
+                    goal: document.getElementById('req-goal').value,
+                    story: document.getElementById('req-story').value,
+                    mood: document.getElementById('req-mood').value,
+                    music: document.getElementById('req-music').value,
+                    images: document.getElementById('req-images').value,
+                    logo: document.getElementById('req-logo').value,
+                    notes: document.getElementById('req-notes').value
+                };
+            } else if(type === 'static-posts') {
+                reqs = {
+                    topics: document.getElementById('req-topics').value,
+                    language: document.getElementById('req-language').value,
+                    captions: document.getElementById('req-captions').value,
+                    images: document.getElementById('req-images').value,
+                    logo: document.getElementById('req-logo').value,
+                    notes: document.getElementById('req-notes').value
+                };
+            }
+
+            try {
+                const doc = await firebase.firestore().collection('orders').doc(targetDocId).get();
+                const currentStatus = doc.data().status;
+                const newStatus = (currentStatus === "Pending Verification") ? "Pending Verification" : "Production Level 1";
+
+                const initialRole = workflowLevels[1].role; // Target the first production role
+
+                await firebase.firestore().collection('orders').doc(targetDocId).update({
+                    requirements: reqs,
+                    currentStage: 1,
+                    status: newStatus,
+                    targetRole: initialRole, // Automated routing
+                    assignedTo: null // Unassigned pool
+                });
+
+                await firebase.firestore().collection('orders').doc(targetDocId).collection('history').add({
+                    type: 'requirements',
+                    userName: 'Client',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Note: The onSnapshot listener will automatically render the locked UI
+            } catch (e) {
+                console.error(e);
+                alert("Error saving requirements.");
+            }
+        }
+
+        function simulateAdminUpload() {
+            document.getElementById('action-panel').innerHTML = `
+                <div class="panel-header">👀 ${workflowLevels[currentStage].label} <span style="font-size: 0.8rem; font-weight: 500; color: #feca57; background: rgba(254, 202, 87, 0.1); padding: 4px 8px; border-radius: 4px;">Action Required</span></div>
+                <p style="color: var(--text-muted); margin-bottom: 24px;">The deliverables for this milestone are ready for your review. Please check the links below and approve if satisfied, or request revisions in the chat.</p>
+                
+                <div style="background: rgba(0, 163, 255, 0.05); border: 1px solid rgba(0, 163, 255, 0.2); padding: 20px; border-radius: 8px; margin-bottom: 24px; display: flex; align-items: center; gap: 16px;">
+                    <div style="font-size: 2rem;">📁</div>
+                    <div>
+                        <div style="font-weight: 700; color: #fff;">Milestone Assets (Google Drive)</div>
+                        <a href="#" style="color: var(--primary); font-size: 0.9rem;">View Files ↗</a>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 16px;">
+                    <button class="btn-success" style="flex: 2;" onclick="approveMilestone()">✅ Approve & Proceed to Next Level</button>
+                    <button class="btn-primary" style="flex: 1; background: transparent; border: 1px solid rgba(255,255,255,0.2);">Request Revision</button>
+                </div>
+            `;
+            addSystemMessage("Admin has uploaded the deliverables for this milestone! Please review them.");
+        }
+
+        async function approveMilestone() {
+            try {
+                const doc = await firebase.firestore().collection('orders').doc(docId).get();
+                const data = doc.data();
+                let nextStage = data.currentStage + 1;
+                
+                // If the next stage is an INTERNAL stage, we still want to move it to the internal stage,
+                // but the client shouldn't see an approval state, they should see "In Progress"
+                // Actually, the approveMilestone function should advance currentStage and 
+                // assign to the NEXT role.
+                const nextRole = workflowLevels[nextStage] ? workflowLevels[nextStage].role : "Done";
+                
+                const isDone = nextRole === "Done";
+                const updateFields = {
+                    currentStage: nextStage,
+                    status: isDone ? "Completed" : "In Production",
+                    targetRole: nextRole,
+                    assignedTo: null // Send back to the pool
+                };
+
+                if (!isDone) {
+                    updateFields.clientDeliverableLink = firebase.firestore.FieldValue.delete();
+                    updateFields.internalAssets = firebase.firestore.FieldValue.delete();
+                    updateFields.uploadNotes = firebase.firestore.FieldValue.delete();
+                } else {
+                    updateFields.completedAt = firebase.firestore.FieldValue.serverTimestamp();
+                }
+
+                await firebase.firestore().collection('orders').doc(docId).update(updateFields);
+
+                await firebase.firestore().collection('orders').doc(docId).collection('history').add({
+                    type: 'approval',
+                    stageLabel: workflowLevels[currentStage].label,
+                    userName: 'Client',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // currentStage is synced via onSnapshot so we don't need to manually advance it here
+                addSystemMessage("Milestone approved! Moving to the next production level.");
+            } catch (error) {
+                console.error("Error approving milestone:", error);
+            }
+        }
+
+        function openRevisionModal() {
+            document.getElementById('revision-notes').value = '';
+            document.getElementById('revisionModal').style.display = 'flex';
+        }
+        function closeRevisionModal() {
+            document.getElementById('revisionModal').style.display = 'none';
+        }
+
+        async function submitRevision() {
+            const notes = document.getElementById('revision-notes').value.trim();
+            if (!notes) {
+                alert("Please provide revision notes.");
+                return;
+            }
+
+            const submitBtn = document.getElementById('btn-revision-submit');
+            let originalText = "Submit Revision Request";
+            if (submitBtn) {
+                originalText = submitBtn.innerText;
+                submitBtn.disabled = true;
+                submitBtn.innerText = "Submitting...";
+            }
+
+            try {
+                // Change status back to "Revision Required" (which triggers creative team view)
+                // Keep targetRole and currentStage the same!
+                await firebase.firestore().collection('orders').doc(docId).update({
+                    status: 'Revision Required',
+                    revisionNotes: notes
+                });
+
+                // Post message from Client in Chat
+                const user = firebase.auth().currentUser;
+                await firebase.firestore().collection('orders').doc(docId).collection('messages').add({
+                    text: `🔄 [Revision Requested]\n\n${notes}`,
+                    senderId: user ? user.uid : 'client',
+                    senderName: user ? (user.displayName || 'Client') : 'Client',
+                    isAdmin: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                // Post system message in Chat
+                await firebase.firestore().collection('orders').doc(docId).collection('messages').add({
+                    text: `Client requested a revision for ${workflowLevels[currentStage].label}. Status changed to Revision Required.`,
+                    senderId: 'system',
+                    senderName: 'System',
+                    isAdmin: true,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                await firebase.firestore().collection('orders').doc(docId).collection('history').add({
+                    type: 'revision',
+                    stageLabel: workflowLevels[currentStage].label,
+                    notes: notes,
+                    userName: user ? (user.displayName || 'Client') : 'Client',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+
+                closeRevisionModal();
+            } catch (error) {
+                console.error("Error submitting revision:", error);
+                alert("Failed to submit revision request.");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = originalText;
+                }
+            }
+        }
+
+        // --- CHAT LOGIC (Firebase) ---
+
+        function handleChatEnter(e) {
+            if(e.key === 'Enter') sendChatMessage();
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chat-input-field');
+            const msg = input.value.trim();
+            if(!msg || !docId) return;
+
+            input.value = '';
+            
+            const user = firebase.auth().currentUser;
+            if(!user) return;
+
+            try {
+                await firebase.firestore().collection('orders').doc(docId).collection('messages').add({
+                    text: msg,
+                    senderId: user.uid,
+                    senderName: user.displayName || 'Client',
+                    isAdmin: false,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error sending message: ", error);
+            }
+        }
+
+        function addSystemMessage(msg) {
+            if (!docId) return;
+            firebase.firestore().collection('orders').doc(docId).collection('messages').add({
+                text: msg,
+                senderId: 'system',
+                senderName: 'System',
+                isAdmin: true,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        }
+
+        // Initialize Chat Listener
+        function initChatListener() {
+            if (!docId) return;
+            const chatBox = document.getElementById('chat-messages');
+            
+            firebase.firestore().collection('orders').doc(docId).collection('messages')
+                .orderBy('createdAt', 'asc')
+                .onSnapshot((snapshot) => {
+                    chatBox.innerHTML = '';
+                    snapshot.forEach((doc) => {
+                        const msg = doc.data();
+                        const roleClass = msg.isAdmin ? 'admin' : 'user';
+                        chatBox.innerHTML += `<div class="chat-msg ${roleClass}">${msg.text}</div>`;
+                    });
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                });
+        }
+        
+        // Wait a small moment then init chat
+        setTimeout(initChatListener, 1000);
+
+        function renderHistoryTimeline(containerId, snapshot) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            if (snapshot.empty) {
+                container.innerHTML = '<div style="color: var(--text-muted); font-size: 0.85rem; padding: 12px; text-align: center;">No activity recorded yet.</div>';
+                return;
+            }
+
+            let html = '';
+            snapshot.forEach((doc) => {
+                const event = doc.data();
+                const dateText = event.createdAt ? new Date(event.createdAt.seconds * 1000).toLocaleString() : 'Just now';
+                
+                let icon = 'ℹ️';
+                let title = 'Activity Logged';
+                let iconBg = 'rgba(255,255,255,0.03)';
+                let notesHTML = '';
+                
+                if (event.type === 'requirements') {
+                    icon = '📝';
+                    title = 'Requirements Submitted';
+                    iconBg = 'rgba(0, 163, 255, 0.1)';
+                } else if (event.type === 'upload') {
+                    icon = '📁';
+                    title = `${event.stageLabel || 'Deliverables'} Submitted`;
+                    iconBg = 'rgba(6, 217, 160, 0.1)';
+                    if (event.link) {
+                        notesHTML += `<div style="margin-top: 6px;"><a href="${event.link}" target="_blank" style="color: var(--primary); font-size: 0.8rem; text-decoration: underline;">View Uploaded Files ↗</a></div>`;
+                    }
+                } else if (event.type === 'revision') {
+                    icon = '🔄';
+                    title = `Revision Requested (${event.stageLabel || 'Milestone'})`;
+                    iconBg = 'rgba(255, 71, 87, 0.1)';
+                } else if (event.type === 'approval') {
+                    icon = '✅';
+                    title = `${event.stageLabel || 'Milestone'} Approved`;
+                    iconBg = 'rgba(6, 217, 160, 0.15)';
+                }
+                
+                if (event.notes) {
+                    notesHTML += `
+                        <div style="margin-top: 8px; background: rgba(0,0,0,0.15); border-left: 2px solid rgba(255,255,255,0.15); padding: 8px 12px; border-radius: 4px; font-size: 0.85rem; color: #fff; white-space: pre-wrap;">${event.notes}</div>
+                    `;
+                }
+
+                html += `
+                    <div style="display: flex; gap: 12px; align-items: flex-start; padding-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left;">
+                        <div style="font-size: 1.1rem; background: ${iconBg}; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">${icon}</div>
+                        <div style="flex-grow: 1; overflow: hidden;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 8px;">
+                                <span style="font-weight: 700; color: #fff; font-size: 0.85rem;">${title}</span>
+                                <span style="font-size: 0.7rem; color: var(--text-muted); white-space: nowrap;">${dateText}</span>
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;">by ${event.userName || 'System'}</div>
+                            ${notesHTML}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Checkout | MSMEgrowth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 14, 23, 0.95);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon {
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+        }
+
+        .main-view {
+            flex-grow: 1;
+            margin-left: 280px;
+            padding: 40px 48px;
+            min-height: 100vh;
+        }
+        
+        .checkout-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step-container {
+            display: none;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 40px;
+        }
+
+        .step-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #fff;
+            padding: 14px 16px;
+            border-radius: 8px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(0,0,0,0.5);
+        }
+        
+        .form-text {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            background: #0088cc;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--secondary);
+            color: #000;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(6, 217, 160, 0.2);
+        }
+
+        .order-summary {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .bank-details {
+            background: rgba(0, 163, 255, 0.05);
+            border: 1px solid rgba(0, 163, 255, 0.2);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .bank-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 12px;
+        }
+        .bank-row:last-child {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        /* Progress Steps Header */
+        .wizard-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        .wizard-steps::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: rgba(255,255,255,0.1);
+            z-index: 0;
+        }
+        .w-step {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            width: 33%;
+        }
+        .w-step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg-dark);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin: 0 auto 12px auto;
+            transition: all 0.3s;
+        }
+        .w-step.active .w-step-circle {
+            border-color: var(--primary);
+            background: rgba(0, 163, 255, 0.1);
+            color: var(--primary);
+        }
+        .w-step.completed .w-step-circle {
+            border-color: var(--secondary);
+            background: var(--secondary);
+            color: #000;
+        }
+        .w-step-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+        .w-step.active .w-step-label, .w-step.completed .w-step-label {
+            color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <a href="index.html" class="nav-logo" style="margin-bottom: 48px; display: block;">MSME<span style="color: var(--primary);">growth</span></a>
+            
+            <nav style="flex-grow: 1;">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">⚡</span> Active Dashboard
+                </a>
+                <a href="services.html" class="nav-item active">
+                    <span class="nav-icon" style="font-size: 1.2rem;">🛍️</span> Service Catalog
+                </a>
+                <a href="courses.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">🎓</span> My Masterclasses
+                </a>
+                <a href="messages.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">💬</span> Messages 
+                </a>
+            </nav>
+
+            <a href="#" class="nav-item" style="margin-bottom: 0;" onclick="firebase.auth().signOut().then(() => window.location.href='login.html')">
+                <span class="nav-icon" style="font-size: 1.2rem;">🚪</span> Sign Out
+            </a>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-view">
+            
+            <div class="checkout-container">
+                
+                <h1 style="font-size: 2.2rem; font-weight: 800; margin-bottom: 8px; text-align: center;">Secure Checkout</h1>
+                <p style="color: var(--text-muted); text-align: center; margin-bottom: 48px;">Complete your purchase to initiate production.</p>
+
+                <!-- Wizard Steps -->
+                <div class="wizard-steps">
+                    <div class="w-step active" id="nav-step-1">
+                        <div class="w-step-circle">1</div>
+                        <div class="w-step-label">Business Details</div>
+                    </div>
+                    <div class="w-step" id="nav-step-2">
+                        <div class="w-step-circle">2</div>
+                        <div class="w-step-label">Payment</div>
+                    </div>
+                    <div class="w-step" id="nav-step-3">
+                        <div class="w-step-circle">3</div>
+                        <div class="w-step-label">Verification</div>
+                    </div>
+                </div>
+
+                <!-- STEP 1: BUSINESS REQUIREMENTS -->
+                <div class="step-container active" id="step-1">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 24px;">Business Requirements</h2>
+                    <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; margin-bottom: 32px;">This information is saved to your profile and reused for future orders. Keep it simple.</p>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Business Name</label>
+                        <input type="text" class="form-control" placeholder="e.g. ABC Clothing" id="bus-name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Business Social Media / Website</label>
+                        <input type="text" class="form-control" placeholder="e.g. https://facebook.com/abcclothing" id="bus-social">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Google Drive Folder (Brand Assets)</label>
+                        <input type="text" class="form-control" placeholder="Paste Google Drive link here" id="bus-drive">
+                        <span class="form-text">Please upload your Logo, Brand Colors, Product Images, and Fonts into one folder and share the link.</span>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 40px;">
+                        <label class="form-label">Additional Notes</label>
+                        <textarea class="form-control" rows="4" placeholder="e.g. Use a modern luxury style. Our target audience is women aged 20-35." id="bus-notes"></textarea>
+                    </div>
+
+                    <button class="btn-primary" onclick="goToStep2()">Continue to Payment →</button>
+                </div>
+
+                <!-- STEP 2: PAYMENT PAGE -->
+                <div class="step-container" id="step-2">
+                    <h2 style="font-size: 1.5rem; margin-bottom: 24px;">Payment Summary</h2>
+                    
+                    <div class="order-summary">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                            <div>
+                                <div style="font-weight: 700; font-size: 1.1rem; color: #fff;" id="checkout-service-name">Service Name</div>
+                                <div style="color: var(--text-muted); font-size: 0.9rem;" id="checkout-pkg-name">Package Name</div>
+                            </div>
+                            <div style="font-weight: 800; font-size: 1.5rem; color: var(--secondary);" id="checkout-price">LKR 0</div>
+                        </div>
+                        <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 16px; margin-top: 16px; display: flex; justify-content: space-between; font-weight: 700;">
+                            <span>Total Due Today:</span>
+                            <span id="checkout-total">LKR 0</span>
+                        </div>
+                    </div>
+
+                    <h3 style="font-size: 1.2rem; margin-bottom: 16px;">Bank Transfer Details</h3>
+                    <div class="bank-details">
+                        <div class="bank-row">
+                            <span style="color: var(--text-muted);">Bank Name:</span>
+                            <span style="font-weight: 600; color: #fff;">Commercial bank</span>
+                        </div>
+                        <div class="bank-row">
+                            <span style="color: var(--text-muted);">Account Name:</span>
+                            <span style="font-weight: 600; color: #fff;">Sakthivell vidyashagar</span>
+                        </div>
+                        <div class="bank-row">
+                            <span style="color: var(--text-muted);">Account Number:</span>
+                            <span style="font-weight: 600; color: #fff; font-family: monospace; font-size: 1.1rem;">8001409365</span>
+                        </div>
+                        <div class="bank-row">
+                            <span style="color: var(--text-muted);">Branch:</span>
+                            <span style="font-weight: 600; color: #fff;">second branch</span>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); padding: 16px; border-radius: 8px; margin-bottom: 32px; display: flex; gap: 12px; align-items: flex-start;">
+                        <span style="font-size: 1.5rem;">⚠️</span>
+                        <div>
+                            <div style="font-weight: 700; color: #FFD700; margin-bottom: 4px;">Important Instruction</div>
+                            <div style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Please use your Order Number <strong style="color: #fff;" id="checkout-order-num">#ORD-0000</strong> as the payment reference when transferring.</div>
+                        </div>
+                    </div>
+
+                    <button id="btn-submit-payment" class="btn-success" onclick="goToStep3(this)">✅ Payment Sent</button>
+                    <button style="background: transparent; border: none; color: var(--text-muted); width: 100%; text-align: center; margin-top: 16px; cursor: pointer; text-decoration: underline; font-family: inherit; font-size: 0.9rem;" onclick="goToStep1()">← Back to Details</button>
+                </div>
+
+                <!-- STEP 3: PAYMENT REVIEW -->
+                <div class="step-container" id="step-3" style="text-align: center;">
+                    
+                    <div style="width: 80px; height: 80px; border-radius: 40px; background: rgba(255, 215, 0, 0.1); border: 2px solid #FFD700; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 24px auto;">
+                        ⏳
+                    </div>
+
+                    <h2 style="font-size: 2rem; margin-bottom: 12px; color: #FFD700;">Pending Verification</h2>
+                    <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; max-width: 500px; margin: 0 auto 32px auto; line-height: 1.6;">
+                        Your payment has been received and is currently under review by our finance team. Payments are usually verified within <strong>1-6 business hours</strong>.
+                    </p>
+
+                    <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); padding: 24px; border-radius: 12px; max-width: 400px; margin: 0 auto 48px auto;">
+                        <div style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">Need immediate help?</div>
+                        <div style="font-weight: 700; color: #fff; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                            <span style="color: #25D366; font-size: 1.3rem;">💬</span> WhatsApp: 072 345 2477
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 60px;">
+                        <button class="btn-primary" style="max-width: 300px; padding: 12px 24px; font-size: 0.95rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer;" onclick="goToWorkspace()">Go to Project Workspace →</button>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/services-data.js"></script>
+
+    <script>
+        // Check Authentication
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                if (typeof hideAuthLoader === 'function') hideAuthLoader();
+            }
+        });
+
+        // Load specific service details from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceId = urlParams.get('service');
+        const pkgIndex = parseInt(urlParams.get('pkg'));
+        
+        const service = servicesData[serviceId];
+        let currentPackage = null;
+        let generatedOrderNum = "ORD-" + Math.floor(1000 + Math.random() * 9000);
+        let createdDocId = null;
+
+        if (service && service.packages[pkgIndex]) {
+            currentPackage = service.packages[pkgIndex];
+            
+            // Populate Step 2 UI
+            document.getElementById('checkout-service-name').innerText = service.name;
+            document.getElementById('checkout-pkg-name').innerText = currentPackage.title;
+            document.getElementById('checkout-price').innerText = currentPackage.price;
+            document.getElementById('checkout-total').innerText = currentPackage.price;
+            document.getElementById('checkout-order-num').innerText = "#" + generatedOrderNum;
+        } else {
+            alert("Invalid service selected. Redirecting to catalog.");
+            window.location.href = "services.html";
+        }
+
+        // Navigation Logic
+        function goToStep2() {
+            // Basic validation
+            if (!document.getElementById('bus-name').value) {
+                alert("Please enter a Business Name.");
+                return;
+            }
+            
+            document.getElementById('step-1').classList.remove('active');
+            document.getElementById('step-2').classList.add('active');
+            
+            document.getElementById('nav-step-1').classList.remove('active');
+            document.getElementById('nav-step-1').classList.add('completed');
+            document.getElementById('nav-step-2').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        function goToStep1() {
+            document.getElementById('step-2').classList.remove('active');
+            document.getElementById('step-1').classList.add('active');
+            
+            document.getElementById('nav-step-2').classList.remove('active');
+            document.getElementById('nav-step-1').classList.remove('completed');
+            document.getElementById('nav-step-1').classList.add('active');
+            window.scrollTo(0,0);
+        }
+
+        async function goToStep3(btnElement) {
+            const user = firebase.auth().currentUser;
+            if (!user) {
+                alert("Authentication error. Please log in again.");
+                return;
+            }
+
+            // Prevent double submission
+            if(btnElement) {
+                btnElement.disabled = true;
+                btnElement.innerText = "⏳ Processing...";
+                btnElement.style.opacity = "0.7";
+                btnElement.style.cursor = "not-allowed";
+            }
+
+            try {
+                // Save to Firestore FIRST
+                const docRef = await firebase.firestore().collection('orders').add({
+                    orderNum: generatedOrderNum,
+                    clientId: user.uid,
+                    clientEmail: user.email || 'N/A',
+                    serviceId: serviceId,
+                    serviceName: service.name,
+                    pkgIndex: pkgIndex,
+                    pkgTitle: currentPackage.title,
+                    price: currentPackage.price,
+                    pkgIndex: pkgIndex,
+                    pkgTitle: currentPackage.title,
+                    price: currentPackage.price,
+                    businessName: document.getElementById('bus-name').value,
+                    status: "Pending Verification",
+                    createdAt: new Date().getTime(),
+                    dateString: new Date().toLocaleDateString()
+                });
+                
+                createdDocId = docRef.id;
+
+                // ONLY update UI if the write succeeds
+                document.getElementById('step-2').classList.remove('active');
+                document.getElementById('step-3').classList.add('active');
+                
+                document.getElementById('nav-step-2').classList.remove('active');
+                document.getElementById('nav-step-2').classList.add('completed');
+                document.getElementById('nav-step-3').classList.add('active');
+                window.scrollTo(0,0);
+                
+            } catch (error) {
+                console.error("Error creating order: ", error);
+                alert("Error creating order. Please check your internet connection or Firebase Security Rules.");
+                if(btnElement) {
+                    btnElement.disabled = false;
+                    btnElement.innerText = "✅ Payment Sent";
+                    btnElement.style.opacity = "1";
+                    btnElement.style.cursor = "pointer";
+                }
+            }
+        }
+
+        function goToWorkspace() {
+            if (createdDocId) {
+                window.location.href = `project.html?service=${serviceId}&pkg=${pkgIndex}&order=${generatedOrderNum}&docId=${createdDocId}`;
+            } else {
+                window.location.href = `project.html?service=${serviceId}&pkg=${pkgIndex}&order=${generatedOrderNum}`;
+            }
+        }
+    </script>
+</body>
+</html>

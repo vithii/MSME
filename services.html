@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Catalog | MSMEgrowth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 14, 23, 0.95);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon {
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            border-left: 3px solid var(--primary);
+            background: rgba(0, 163, 255, 0.05);
+        }
+
+        .main-view {
+            flex-grow: 1;
+            margin-left: 280px;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 48px;
+            background: rgba(10,10,15,0.9);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+            color: #fff;
+        }
+
+        /* PROFESSIONAL UX STRIP LAYOUT */
+        .service-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.015);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 16px;
+            transition: background 0.3s, border-color 0.3s;
+        }
+
+        .service-row:hover {
+            background: rgba(255,255,255,0.03);
+            border-color: rgba(255,255,255,0.08);
+        }
+
+        .service-identity {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex: 0 0 320px;
+        }
+
+        .service-packages-container {
+            display: flex;
+            gap: 16px;
+            flex-grow: 1;
+        }
+
+        .package-tier {
+            flex: 1;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .package-tier:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 163, 255, 0.3);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .package-tier.popular {
+            background: rgba(6, 217, 160, 0.05);
+            border-color: rgba(6, 217, 160, 0.3);
+        }
+
+        .tier-name {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .package-tier.popular .tier-name {
+            color: var(--secondary);
+        }
+
+        .tier-price {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        .btn-select {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 10px 0;
+            width: 100%;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-select:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .package-tier.popular .btn-select {
+            background: var(--secondary);
+            color: #000;
+            border-color: var(--secondary);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <a href="index.html" class="nav-logo" style="margin-bottom: 48px; display: block;">MSME<span style="color: var(--primary);">growth</span></a>
+            
+            <nav style="flex-grow: 1;">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">⚡</span> Active Dashboard
+                </a>
+                <a href="services.html" class="nav-item active">
+                    <span class="nav-icon" style="font-size: 1.2rem;">🛍️</span> Service Catalog
+                </a>
+                <a href="courses.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">🎓</span> My Masterclasses
+                </a>
+                <a href="messages.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">💬</span> Messages 
+                </a>
+            </nav>
+
+            <a href="#" class="nav-item" style="margin-bottom: 0;" onclick="firebase.auth().signOut().then(() => window.location.href='login.html')">
+                <span class="nav-icon" style="font-size: 1.2rem;">🚪</span> Sign Out
+            </a>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-view">
+
+            <div class="top-bar">
+                <div>
+                    <h1 style="font-size: 2rem; margin-bottom: 4px; font-weight: 800;" id="welcome-title">Welcome back 👋</h1>
+                    <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Choose your production package.</p>
+                </div>
+                
+                <div style="display: flex; gap: 32px; align-items: center;">
+                    <div style="display: flex; gap: 24px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.2rem; font-weight: 800; color: #fff;">0</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Active Orders</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 1.2rem; font-weight: 800; color: var(--secondary);">0</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Credits</div>
+                        </div>
+                    </div>
+                    
+                    <div style="width: 1px; height: 32px; background: rgba(255,255,255,0.1);"></div>
+
+                    <div class="user-profile">
+                        <div style="text-align: right;">
+                            <div style="font-weight: 600; font-size: 0.9rem;" id="profile-name">Client Name</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">Customer</div>
+                        </div>
+                        <div class="avatar" id="profile-avatar">C</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="catalog-container" style="padding: 40px 48px; max-width: 1200px; margin: 0 auto; width: 100%;">
+                <!-- Dynamically populated from JS -->
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/services-data.js"></script>
+    
+    <script>
+        const profileName = document.getElementById('profile-name');
+        const profileAvatar = document.getElementById('profile-avatar');
+
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                if (typeof hideAuthLoader === 'function') hideAuthLoader();
+                try {
+                    const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        if (userData.name) {
+                            const firstName = userData.name.split(' ')[0];
+                            if(profileName) profileName.innerText = userData.name;
+                            if(profileAvatar) profileAvatar.innerText = firstName.charAt(0).toUpperCase();
+                            
+                            const welcomeTitle = document.getElementById('welcome-title');
+                            if(welcomeTitle) welcomeTitle.innerHTML = `Welcome back, <span style="color: var(--primary);">${firstName}</span> 👋`;
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+        
+        // Render Professional Minimal UX
+        const container = document.getElementById('catalog-container');
+        
+        // Add Recommendation Section Placeholder
+        container.innerHTML = `
+            <div style="background: linear-gradient(90deg, rgba(6, 217, 160, 0.05), rgba(0, 163, 255, 0.05)); border: 1px solid rgba(6, 217, 160, 0.2); border-radius: 16px; padding: 24px 32px; margin-bottom: 48px; display: flex; align-items: center; justify-content: space-between;">
+                <div>
+                    <div style="color: var(--secondary); font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px;">✨ AI Recommendation</div>
+                    <h2 style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 4px;">Based on your E-commerce profile</h2>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">We highly recommend the Product Ad Growth Package to scale your store.</p>
+                </div>
+                <button class="btn-sales secondary" style="padding: 12px 24px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; background: var(--secondary); color: #000;">View Recommendation</button>
+            </div>
+            <div id="dynamic-catalog"></div>
+            
+            <div style="text-align: center; margin-top: 60px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.05);">
+                <div style="font-size: 1.5rem; color: #FFD700; margin-bottom: 8px;">★★★★★</div>
+                <div style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-bottom: 4px;">Trusted by 45+ Businesses</div>
+                <div style="color: var(--text-muted); font-size: 0.9rem;">Over 250+ highly profitable assets delivered.</div>
+            </div>
+        `;
+
+        const dynamicCatalog = document.getElementById('dynamic-catalog');
+        
+        const categories = [
+            {
+                title: "Video Services",
+                services: [
+                    servicesData["ai-presenter"],
+                    servicesData["product-ads"],
+                    servicesData["cinematic-ads"]
+                ]
+            },
+            {
+                title: "Image Services",
+                services: [
+                    servicesData["static-posts"]
+                ]
+            }
+        ];
+
+        let catalogHtml = '';
+        
+        categories.forEach(category => {
+            catalogHtml += `
+                <div style="margin-bottom: 40px;">
+                    <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px;">${category.title}</h2>
+            `;
+            
+            category.services.forEach(service => {
+                if (service) {
+                    let packagesHtml = '';
+                    service.packages.forEach((pkg, index) => {
+                        const isPopular = index === 1;
+                        packagesHtml += `
+                            <div class="package-tier ${isPopular ? 'popular' : ''}">
+                                ${pkg.badge ? `<div style="position: absolute; top: -10px; background: #ff0055; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 10px; text-transform: uppercase;">${pkg.badge}</div>` : ''}
+                                <div class="tier-name">${pkg.title}</div>
+                                <div class="tier-price">${pkg.price}</div>
+                                <button class="btn-select" onclick="window.location.href='checkout.html?service=${service.id}&pkg=${index}'">
+                                    Start Project
+                                </button>
+                                <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 12px; font-weight: 500;">Delivery: ${pkg.delivery}</div>
+                            </div>
+                        `;
+                    });
+
+                    catalogHtml += `
+                        <div class="service-row">
+                            
+                            <div class="service-identity" style="flex: 0 0 350px;">
+                                <div style="font-size: 2.5rem;">${service.icon}</div>
+                                <div>
+                                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 6px;">${service.name}</h3>
+                                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7); line-height: 1.4; margin-bottom: 8px;">${service.description}</p>
+                                    
+                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.8rem; font-weight: 600;">
+                                        <span style="color: #FFD700;">⭐ ${service.rating || '4.9'}</span>
+                                        <span style="color: var(--text-muted);">|</span>
+                                        <span style="color: var(--primary);">${service.orders || '10'} Orders</span>
+                                    </div>
+
+                                    <a href="service-details.html?id=${service.id}" style="color: var(--primary); font-size: 0.85rem; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(0, 163, 255, 0.1); border-radius: 6px;">
+                                        See Everything Included →
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="service-packages-container">
+                                ${packagesHtml}
+                            </div>
+
+                        </div>
+                    `;
+                }
+            });
+
+            catalogHtml += `
+                </div>
+            `;
+        });
+        
+        dynamicCatalog.innerHTML = catalogHtml;
+    </script>
+</body>
+</html>

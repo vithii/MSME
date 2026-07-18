@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Details | MSMEgrowth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 14, 23, 0.95);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon {
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            border-left: 3px solid var(--primary);
+            background: rgba(0, 163, 255, 0.05);
+        }
+
+        .main-view {
+            flex-grow: 1;
+            margin-left: 280px;
+            padding: 0;
+            padding-bottom: 120px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 48px;
+            background: rgba(10,10,15,0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+
+
+        .sales-hero {
+            padding: 24px 48px 24px 48px;
+            text-align: center;
+        }
+
+        .headline {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .subheadline {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.6);
+            margin: 0 auto 16px auto;
+            max-width: 800px;
+        }
+
+        /* 3 TALL VERTICAL CARDS (The exact mockup layout) */
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1100px;
+            margin: 0 auto 40px auto;
+            padding: 0 24px;
+        }
+
+        .package-card {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .package-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 163, 255, 0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 30px rgba(0,163,255,0.1);
+        }
+
+        .package-card.popular {
+            background: linear-gradient(180deg, rgba(6, 217, 160, 0.05) 0%, rgba(255,255,255,0.02) 100%);
+            border: 2px solid var(--secondary);
+            transform: scale(1.05);
+            z-index: 2;
+        }
+
+        .package-card.popular:hover {
+            transform: scale(1.05) translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 40px rgba(6, 217, 160, 0.2);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--secondary);
+            color: #000;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(6, 217, 160, 0.4);
+        }
+
+        .discount-badge {
+            display: inline-block;
+            background: rgba(255,0,85,0.1);
+            color: #ff0055;
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            margin-bottom: 16px;
+            border: 1px solid rgba(255,0,85,0.2);
+        }
+
+        .package-price {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .btn-sales {
+            background: linear-gradient(90deg, var(--primary), #0077ff);
+            color: white;
+            font-weight: 800;
+            font-size: 1.1rem;
+            padding: 16px 24px;
+            border: none;
+            border-radius: 12px;
+            width: 100%;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: auto;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 20px rgba(0, 163, 255, 0.2);
+        }
+
+        .btn-sales:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(0, 163, 255, 0.4);
+        }
+        
+        .btn-sales.secondary {
+            background: linear-gradient(90deg, var(--secondary), #00b386);
+            color: #000;
+            box-shadow: 0 10px 20px rgba(6, 217, 160, 0.2);
+        }
+
+        .btn-sales.secondary:hover {
+            box-shadow: 0 15px 30px rgba(6, 217, 160, 0.4);
+        }
+
+        .urgency-text {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #ff3300;
+            margin-top: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        /* Lists */
+        .sales-list {
+            list-style: none;
+            padding: 0;
+            margin: 32px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .sales-list li {
+            font-size: 0.95rem;
+            color: rgba(255,255,255,0.85);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-weight: 500;
+        }
+        
+        .sales-list li.dim {
+            color: rgba(255,255,255,0.4);
+        }
+        .sales-list li.dim span {
+            opacity: 0.3;
+        }
+
+        /* Portfolio */
+        .portfolio-section {
+            padding: 0 48px 80px 48px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .portfolio-gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .portfolio-item {
+            height: 250px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255,255,255,0.4);
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .portfolio-item::after {
+            content: '▶ PLAY SHOWREEL';
+            position: absolute;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(5px);
+            padding: 12px 24px;
+            border-radius: 30px;
+            color: white;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            opacity: 0;
+            transition: 0.3s ease;
+        }
+        
+        .portfolio-item:hover::after {
+            opacity: 1;
+        }
+
+        .guarantee-box {
+            background: rgba(6, 217, 160, 0.05);
+            border: 1px solid rgba(6, 217, 160, 0.2);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 80px auto;
+        }
+
+        /* NEW SALES PAGE SECTIONS */
+        .benefits-list {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        
+        .social-proof-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: rgba(255,255,255,0.02);
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 40px;
+            margin-bottom: 80px;
+        }
+        .stat-box {
+            text-align: center;
+        }
+        .stat-num {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .featured-video {
+            max-width: 900px;
+            margin: 0 auto 80px auto;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .timeline {
+            max-width: 800px;
+            margin: 0 auto 80px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .timeline-step {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            background: rgba(255,255,255,0.02);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .step-num {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            background: rgba(0, 163, 255, 0.1);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 900;
+            flex-shrink: 0;
+            border: 2px solid var(--primary);
+        }
+
+        .testimonials {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            max-width: 1000px;
+            margin: 0 auto 80px auto;
+        }
+        .testimonial-card {
+            background: rgba(255,255,255,0.02);
+            padding: 32px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .stars {
+            color: #FFD700;
+            font-size: 1.2rem;
+            margin-bottom: 16px;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto 80px auto;
+        }
+        .faq-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            padding: 24px;
+        }
+        .faq-q {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        .faq-a {
+            color: rgba(255,255,255,0.7);
+            line-height: 1.5;
+        }
+
+        .final-cta {
+            background: linear-gradient(180deg, rgba(0,163,255,0.05) 0%, rgba(10,10,15,1) 100%);
+            text-align: center;
+            padding: 80px 24px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <a href="index.html" class="nav-logo" style="margin-bottom: 48px; display: block;">MSME<span style="color: var(--primary);">growth</span></a>
+            
+            <nav style="flex-grow: 1;">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">⚡</span> Active Dashboard
+                </a>
+                <a href="services.html" class="nav-item active">
+                    <span class="nav-icon" style="font-size: 1.2rem;">🛍️</span> Service Catalog
+                </a>
+                <a href="courses.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">🎓</span> My Masterclasses
+                </a>
+                <a href="messages.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">💬</span> Messages 
+                </a>
+            </nav>
+
+            <a href="#" class="nav-item" style="margin-bottom: 0;" onclick="firebase.auth().signOut().then(() => window.location.href='login.html')">
+                <span class="nav-icon" style="font-size: 1.2rem;">🚪</span> Sign Out
+            </a>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-view" id="main-content" style="display: none;">
+            
+            <div class="top-bar" style="padding: 16px 48px;">
+                <a href="services.html" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(255,255,255,0.1); color: var(--text-muted);">← Back</a>
+                <div class="user-profile">
+                    <div style="text-align: right;">
+                        <div style="font-weight: 600; font-size: 0.85rem;" id="profile-name">Client Name</div>
+                    </div>
+                    <div class="avatar" id="profile-avatar" style="width: 32px; height: 32px; font-size: 0.85rem;">C</div>
+                </div>
+            </div>
+
+            <div id="dynamic-container">
+                <!-- Javascript will inject everything here -->
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/services-data.js"></script>
+    
+    <script>
+        const profileName = document.getElementById('profile-name');
+        const profileAvatar = document.getElementById('profile-avatar');
+        const mainContent = document.getElementById('main-content');
+        const dynamicContainer = document.getElementById('dynamic-container');
+
+        // Extract ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceId = urlParams.get('id');
+        const service = servicesData[serviceId];
+
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        if (userData.name) {
+                            const firstName = userData.name.split(' ')[0];
+                            if(profileName) profileName.innerText = userData.name;
+                            if(profileAvatar) profileAvatar.innerText = firstName.charAt(0).toUpperCase();
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        if (!service) {
+            dynamicContainer.innerHTML = `<h1 style="text-align:center; padding: 100px; color: var(--text-muted); font-weight: 500;">Service not found.</h1>`;
+            mainContent.style.display = 'block';
+        } else {
+            
+            // Build the 3 tall cards based on the packages array
+            let cardsHtml = '';
+            service.packages.forEach((pkg, index) => {
+                const isPopular = index === 1; // Middle package is the sweet spot
+                
+                cardsHtml += `
+                    <div class="package-card ${isPopular ? 'popular' : ''}">
+                        ${isPopular ? '<div class="popular-badge">Most Popular</div>' : ''}
+                        <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; color: ${isPopular ? 'var(--secondary)' : '#fff'}; text-align: center;">${pkg.title}</h3>
+                        ${pkg.badge ? `<div class="discount-badge" style="margin: 0 auto 12px auto; display: table;">${pkg.badge} SAVINGS</div>` : ''}
+                        
+                        <div class="package-price" style="font-size: 2.2rem; text-align: center;">${pkg.price}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-bottom: 32px; text-align: center;">⚡ Delivered in ${pkg.delivery}</div>
+
+                        <div style="margin-top: auto; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                            <span style="font-size: 1.1rem; font-weight: 900; color: #fff;">${pkg.costPer}</span>
+                        </div>
+
+                        <!-- BUY BUTTON RESTORED TO BOTTOM -->
+                        <button class="btn-sales ${isPopular ? 'secondary' : ''}" style="margin-top: 24px;" onclick="window.location.href='checkout.html?service=${service.id}&pkg=${index}'">
+                            Start My Project
+                        </button>
+                    </div>
+                `;
+            });
+
+            // Build Page Layout
+            let html = `
+                <!-- 1. Sales Hero -->
+                <div class="sales-hero" style="padding-top: 40px; margin-bottom: 24px;">
+                    <div style="font-size: 3rem; margin-bottom: 16px;">${service.icon}</div>
+                    <h1 class="headline" style="max-width: 900px; margin: 0 auto 24px auto;">${service.heroHeadline}</h1>
+                    <p class="subheadline" style="font-size: 1.1rem;">${service.description}</p>
+                    
+                    <div class="benefits-list">
+                        ${service.benefits.map(b => `
+                            <div class="benefit-item">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                ${b}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- 2. Social Proof Bar -->
+                <div class="social-proof-bar">
+                    <div class="stat-box">
+                        <div class="stat-num">45+</div>
+                        <div class="stat-label">Businesses Scaled</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-num">250+</div>
+                        <div class="stat-label">Assets Delivered</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-num">98%</div>
+                        <div class="stat-label">Client Satisfaction</div>
+                    </div>
+                </div>
+
+                <!-- 3. Featured Video Placeholder -->
+                <div class="featured-video" onclick="alert('Playing featured showcase...')">
+                    <div style="text-align: center; color: rgba(255,255,255,0.8);">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+                        <h3 style="font-size: 1.5rem; font-weight: 700;">Watch The Showreel</h3>
+                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">Click to see real results generated for our clients.</p>
+                    </div>
+                </div>
+
+                <!-- 4. Pricing Grid -->
+                <div class="packages-grid">
+                    ${cardsHtml}
+                </div>
+
+                <!-- 5. Everything Included -->
+                <div style="max-width: 900px; margin: 0 auto 80px auto; text-align: center; padding: 0 24px;">
+                    <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 24px;">Everything Included In All Packages:</div>
+                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;">
+                        ${service.included.map(inc => `
+                            <span style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 8px 16px; font-size: 0.9rem; color: rgba(255,255,255,0.9); font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                ${inc}
+                            </span>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- 6. How It Works -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px;">The Production Process</h2>
+                    <p style="color: var(--text-muted);">How we go from idea to highly-profitable asset.</p>
+                </div>
+                <div class="timeline">
+                    ${timelineSteps.map(t => `
+                        <div class="timeline-step">
+                            <div class="step-num">${t.step}</div>
+                            <div>
+                                <h4 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; color: #fff;">${t.title}</h4>
+                                <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem;">${t.desc}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <!-- 7. Portfolio -->
+                <div class="portfolio-section" id="portfolio">
+                    <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 16px; text-align: center;">See Previous Works & Case Studies</h2>
+                    <p style="text-align: center; color: var(--text-muted); margin-bottom: 48px; font-size: 1.1rem;">Proof is in the profit. See how we've scaled brands exactly like yours.</p>
+                    <div class="portfolio-gallery">
+                        <div class="portfolio-item">Video Proof 1</div>
+                        <div class="portfolio-item">Before / After Proof</div>
+                        <div class="portfolio-item">Client ROI Case Study</div>
+                    </div>
+                </div>
+
+                <!-- 8. Testimonials -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px;">What Our Clients Say</h2>
+                </div>
+                <div class="testimonials">
+                    <div class="testimonial-card">
+                        <div class="stars">★★★★★</div>
+                        <p style="font-size: 1.05rem; color: rgba(255,255,255,0.9); line-height: 1.6; margin-bottom: 24px; font-style: italic;">"Absolutely incredible. They delivered the assets 2 days early and the quality completely blew our competitors out of the water. Our ad costs dropped by 40% immediately."</p>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.1);"></div>
+                            <div>
+                                <div style="font-weight: 700; font-size: 0.9rem;">David Chen</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">E-commerce Founder</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-card">
+                        <div class="stars">★★★★★</div>
+                        <p style="font-size: 1.05rem; color: rgba(255,255,255,0.9); line-height: 1.6; margin-bottom: 24px; font-style: italic;">"The level of professionalism is unmatched. You get a dedicated portal, live tracking, and the final delivery is flawless. Highly recommended."</p>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 40px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.1);"></div>
+                            <div>
+                                <div style="font-weight: 700; font-size: 0.9rem;">Sarah Jenkins</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Marketing Director</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. FAQ -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px;">Frequently Asked Questions</h2>
+                </div>
+                <div class="faq-container">
+                    ${service.faqs.map(f => `
+                        <div class="faq-item">
+                            <div class="faq-q">${f.q}</div>
+                            <div class="faq-a">${f.a}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <!-- 10. Guarantee -->
+                <div class="guarantee-box">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 24px; color: var(--secondary);">100% Iron-Clad Quality Guarantee</h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: left; max-width: 600px; margin: 0 auto;">
+                        <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Unlimited Minor Revisions</div>
+                        <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Dedicated Project Manager</div>
+                        <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Milestone Approvals</div>
+                        <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Secure File Delivery</div>
+                    </div>
+                </div>
+
+                <!-- 11. Final CTA -->
+                <div class="final-cta">
+                    <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,51,0,0.1); color: #ff3300; padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 24px; border: 1px solid rgba(255,51,0,0.2);">
+                        🔥 High Demand: Only 4 Production Slots Left This Week
+                    </div>
+                    <h2 style="font-size: 3rem; font-weight: 900; margin-bottom: 16px; color: #fff;">Ready to Scale?</h2>
+                    <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 32px auto;">Select a package above and secure your slot before we reach full capacity.</p>
+                    <button class="btn-sales" style="max-width: 300px; padding: 20px 40px;" onclick="window.scrollTo({top: 500, behavior: 'smooth'})">Start My Project</button>
+                    
+                    <div style="margin-top: 48px; padding-top: 48px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; color: rgba(255,255,255,0.3); display: flex; justify-content: space-between; align-items: center;">
+                        <div>© MSMEgrowth. All rights reserved.</div>
+                        <div style="display: flex; gap: 24px;">
+                            <a href="#" style="color: inherit; text-decoration: none;">Terms of Service</a>
+                            <a href="#" style="color: inherit; text-decoration: none;">Privacy Policy</a>
+                            <a href="#" style="color: inherit; text-decoration: none;">Refund Policy</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            dynamicContainer.innerHTML = html;
+            mainContent.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

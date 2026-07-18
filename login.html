@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In | MSMEgrowth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background: var(--bg-dark);
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: var(--primary);
+            filter: blur(180px);
+            opacity: 0.15;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: var(--secondary);
+            filter: blur(180px);
+            opacity: 0.15;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 480px;
+            padding: 48px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0,163,255,0.2);
+            background: rgba(0,0,0,0.4);
+        }
+
+        .toggle-text {
+            margin-top: 24px;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .toggle-link {
+            color: var(--primary);
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .toggle-link:hover {
+            text-decoration: underline;
+        }
+
+        #error-msg {
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            margin-bottom: 16px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="auth-container glass">
+        <a href="index.html" class="nav-logo" style="margin-bottom: 32px; display: block;">MSME<span style="color: var(--primary);">growth</span></a>
+        
+        <h1 id="auth-title" style="font-size: 2rem; margin-bottom: 8px;">Access Portal</h1>
+        <p id="auth-subtitle" class="text-muted" style="margin-bottom: 32px;">Sign in to track your high-stakes assets.</p>
+
+        <div id="error-msg"></div>
+
+        <form id="auth-form">
+            <div class="form-group" id="name-group" style="display: none;">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="name" class="form-input" placeholder="e.g. John Doe">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="email" class="form-input" placeholder="you@company.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 1.1rem; margin-top: 8px;" id="submit-btn">Authenticate</button>
+        </form>
+
+        <p class="toggle-text">
+            <span id="toggle-desc">Don't have an account?</span> 
+            <a class="toggle-link" id="toggle-btn">Create one</a>
+        </p>
+        
+        <div style="margin-top: 32px; position: relative;">
+            <div style="position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.1); z-index: 1;"></div>
+            <span style="position: relative; z-index: 2; background: var(--bg-dark); padding: 0 16px; color: var(--text-muted); font-size: 0.85rem;">OR</span>
+        </div>
+        
+        <button id="google-btn" class="btn btn-outline" style="width: 100%; margin-top: 32px;">
+            Sign in with Google
+        </button>
+    </div>
+
+    <!-- Firebase Compat SDKs (For local file:// support) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

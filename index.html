@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MSMEgrowth | The Unfair Advantage</title>
+    <meta name="description" content="Elite-tier production, cinematic advertising, and battle-tested growth strategies reserved for brands that refuse to blend in.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="nav-logo">MSME<span style="color: var(--primary);">growth</span></a>
+            <div class="nav-links">
+                <a href="#production">Production</a>
+                <a href="#strategy">Strategy</a>
+                <a href="#masterclass">Masterclass</a>
+                <a href="dashboard.html" class="btn btn-outline" style="padding: 10px 24px; font-size: 0.8rem;">Client Portal</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content reveal">
+                <h1>The <span class="text-gradient">Unfair Advantage</span> for Your Business.</h1>
+                <p>Elite-tier production, cinematic advertising, and battle-tested growth strategies—reserved strictly for brands that refuse to blend in.</p>
+                <div class="hero-btns">
+                    <a href="#production" class="btn btn-primary">View Production</a>
+                    <a href="#masterclass" class="btn btn-outline">Explore Masterclasses</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services (Production) Section -->
+    <section id="production">
+        <div class="container">
+            <div class="section-header reveal">
+                <h2>High-Stakes <span class="text-gradient">Production.</span></h2>
+                <p class="text-muted" style="font-size: 1.2rem; max-width: 500px;">We don't do basic. From AI-driven storytelling to cinematic commercials, we build assets that command attention and drive revenue.</p>
+            </div>
+            
+            <div class="grid-3 reveal">
+                <div class="card glass">
+                    <h3>Cinematic Advertisements</h3>
+                    <p>Luxury brand storytelling and high-budget commercial productions designed to completely distance you from the competition.</p>
+                    <a href="#" class="card-link text-gradient">Initiate Project →</a>
+                </div>
+
+                <div class="card glass">
+                    <h3>AI Presenter Videos</h3>
+                    <p>Flawless, studio-quality AI presenter videos for aggressive social media scaling. Hyper-realistic and highly engaging.</p>
+                    <a href="#" class="card-link text-gradient">Initiate Project →</a>
+                </div>
+                
+                <div class="card glass">
+                    <h3>Static Architectures</h3>
+                    <p>Custom-engineered static posts. We craft visual psychology optimized for Facebook, Instagram, and high-level B2B LinkedIn campaigns.</p>
+                    <a href="#" class="card-link text-gradient">Initiate Project →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Courses (Masterclass) Section -->
+    <section id="masterclass" style="background: rgba(255,255,255,0.01);">
+        <div class="container">
+            <div class="section-header text-center reveal">
+                <h2>The Blueprint to <span class="text-gradient">10x Growth.</span></h2>
+                <p class="text-muted" style="font-size: 1.2rem; max-width: 600px; margin: 0 auto;">Exclusive masterclasses distilling 20+ years of high-stakes consulting into actionable, field-tested frameworks.</p>
+            </div>
+            
+            <div class="grid-3 reveal">
+                <div class="card glass" style="background: rgba(0,0,0,0.2);">
+                    <h3>The Growth Protocol</h3>
+                    <p>Unlock the exact proprietary frameworks we use to systematically scale MSMEs in ruthless digital landscapes.</p>
+                    <a href="course.html" class="btn btn-outline" style="width: 100%; border-color: var(--secondary); color: var(--secondary);">Access Masterclass</a>
+                </div>
+                
+                <div class="card glass" style="background: rgba(0,0,0,0.2);">
+                    <h3>Digital Domination</h3>
+                    <p>Stop generating leads. Start engineering a machine that aggressively converts strangers into high-ticket clients.</p>
+                    <a href="course.html" class="btn btn-outline" style="width: 100%;">Access Masterclass</a>
+                </div>
+                
+                <div class="card glass" style="background: rgba(0,0,0,0.2);">
+                    <h3>Tourism Ascendancy</h3>
+                    <p>Specialized, elite strategies for scaling tourism and hospitality businesses in highly saturated international markets.</p>
+                    <a href="course.html" class="btn btn-outline" style="width: 100%;">Access Masterclass</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="strategy">
+        <div class="container">
+            <div class="about-grid reveal">
+                <div class="about-img-wrapper">
+                    <img src="assets/Profile.webp" alt="Sakthivell" class="about-img">
+                </div>
+                <div>
+                    <h2>The Mind Behind <br><span class="text-gradient">The Machine.</span></h2>
+                    <div style="margin-top: 32px; font-size: 1.15rem; color: var(--text-muted);">
+                        <p style="margin-bottom: 24px;">
+                            For over two decades, Sakthivell has been the silent strategist behind the success of more than 1,000 businesses.
+                        </p>
+                        <p style="margin-bottom: 24px;">
+                            Trusted by apex organizations like USAID, ADB, JICA, and Dialog, his approach to MSME development and tourism consultancy isn't about theory—it's about ruthless, undeniable execution.
+                        </p>
+                        <p>
+                            When you engage our services, you aren't just getting an agency. You are acquiring 20 years of high-level tactical business intelligence.
+                        </p>
+                    </div>
+                    <a href="#" class="btn btn-primary" style="margin-top: 40px;">Request Private Consultation</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Simple subtle reveal animation on scroll for that premium feel
+        document.addEventListener("DOMContentLoaded", () => {
+            const elements = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        entry.target.style.opacity = '1';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            elements.forEach(el => {
+                el.style.opacity = '0'; // hide initially
+                el.style.animationPlayState = 'paused';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
