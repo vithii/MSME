@@ -7,94 +7,63 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <style>
-        .dashboard-layout {
-            display: flex;
+        .main-view-full {
             min-height: 100vh;
             background: var(--bg-dark);
             font-family: 'Inter', sans-serif;
-        }
-
-        .sidebar {
-            width: 280px;
-            background: rgba(10, 14, 23, 0.95);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 32px 24px;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            color: var(--text-muted);
-            text-decoration: none;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .nav-icon {
-            width: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255,255,255,0.03);
             color: var(--text-main);
         }
 
-        .nav-item.active {
-            border-left: 3px solid var(--primary);
-            background: rgba(0, 163, 255, 0.05);
-        }
-
-        .main-view {
-            flex-grow: 1;
-            margin-left: 280px;
-            padding: 0;
-            padding-bottom: 120px;
-        }
-
-        .top-bar {
+        .sales-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 24px 48px;
-            background: rgba(10,10,15,0.8);
+            padding: 20px 48px;
+            background: rgba(10, 10, 15, 0.8);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             position: sticky;
             top: 0;
-            z-index: 90;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .nav-back {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        .nav-back:hover {
+            color: #fff;
         }
 
         .sales-hero {
-            padding: 40px 48px 24px 48px;
+            padding: 64px 24px 40px 24px;
             text-align: center;
         }
 
         .headline {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 900;
-            margin-bottom: 16px;
+            margin-bottom: 24px;
             color: #fff;
-            line-height: 1.2;
+            line-height: 1.15;
+            letter-spacing: -1px;
         }
 
         .subheadline {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             color: var(--text-muted);
             max-width: 800px;
-            margin: 0 auto 32px auto;
+            margin: 0 auto 40px auto;
             line-height: 1.6;
         }
 
@@ -119,32 +88,47 @@
             border-radius: 30px;
         }
 
+        /* Video Showcase */
+        .featured-video {
+            max-width: 850px;
+            margin: 48px auto;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6), 0 0 50px rgba(0, 163, 255, 0.1);
+        }
+
         /* Package styling */
         .packages-grid {
             display: flex;
             justify-content: center;
-            margin: 48px auto;
+            margin: 64px auto;
             max-width: 480px;
             padding: 0 24px;
         }
 
         .package-card {
             background: rgba(255, 255, 255, 0.02);
-            border: 2px solid var(--primary);
+            border: 2px solid var(--secondary);
             border-radius: 16px;
             padding: 40px;
             display: flex;
             flex-direction: column;
             width: 100%;
             position: relative;
-            box-shadow: 0 10px 30px rgba(0, 163, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(6, 217, 160, 0.08);
         }
 
         .package-price {
-            font-size: 2.5rem;
+            font-size: 3rem;
             font-weight: 900;
-            color: #fff;
-            margin: 16px 0;
+            color: var(--secondary);
             text-align: center;
         }
 
@@ -152,27 +136,27 @@
             width: 100%;
             background: var(--gradient-brand);
             color: #fff;
-            padding: 16px;
+            padding: 18px;
             border: none;
             border-radius: 8px;
-            font-weight: 700;
-            font-size: 1.1rem;
+            font-weight: 800;
+            font-size: 1.15rem;
             cursor: pointer;
             transition: var(--transition-smooth);
             text-align: center;
             text-decoration: none;
-            box-shadow: 0 10px 20px rgba(0,163,255,0.2);
+            box-shadow: 0 10px 25px rgba(6, 217, 160, 0.2);
         }
 
         .btn-sales:hover {
             transform: translateY(-2px);
-            box-shadow: 0 15px 30px rgba(6, 217, 160, 0.3);
+            box-shadow: 0 15px 35px rgba(6, 217, 160, 0.35);
         }
 
         /* Before / After and Contents Styles */
         .comparison-section {
             max-width: 900px;
-            margin: 64px auto;
+            margin: 80px auto;
             padding: 0 24px;
         }
 
@@ -180,6 +164,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 32px;
+            margin-top: 32px;
         }
 
         .comparison-card {
@@ -189,18 +174,18 @@
         }
 
         .comparison-card.before {
-            background: rgba(255, 71, 87, 0.02);
-            border-color: rgba(255, 71, 87, 0.1);
+            background: rgba(255, 71, 87, 0.01);
+            border-color: rgba(255, 71, 87, 0.08);
         }
 
         .comparison-card.after {
-            background: rgba(6, 217, 160, 0.02);
-            border-color: rgba(6, 217, 160, 0.1);
+            background: rgba(6, 217, 160, 0.01);
+            border-color: rgba(6, 217, 160, 0.08);
         }
 
         .faq-section {
             max-width: 800px;
-            margin: 64px auto;
+            margin: 80px auto;
             padding: 0 24px;
         }
 
@@ -225,59 +210,33 @@
         }
 
         @media (max-width: 768px) {
-            .main-view {
-                margin-left: 0;
+            .sales-header {
+                padding: 20px 24px;
             }
             .comparison-grid {
                 grid-template-columns: 1fr;
             }
             .headline {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
         }
     </style>
 </head>
 <body>
 
-    <div class="dashboard-layout auth-loading" id="dashboard-layout">
+    <div class="main-view-full auth-loading" id="dashboard-layout">
         
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar">
-            <a href="index.html" class="nav-logo" style="margin-bottom: 48px; display: block;">MSME<span style="color: var(--primary);">growth</span></a>
-            
-            <nav style="flex-grow: 1;">
-                <a href="dashboard.html" class="nav-item">
-                    <span class="nav-icon" style="font-size: 1.2rem;">⚡</span> Active Dashboard
-                </a>
-                <a href="services.html" class="nav-item">
-                    <span class="nav-icon" style="font-size: 1.2rem;">🛍️</span> Service Catalog
-                </a>
-                <a href="courses.html" class="nav-item active">
-                    <span class="nav-icon" style="font-size: 1.2rem;">🎓</span> My Masterclasses
-                </a>
-                <a href="messages.html" class="nav-item">
-                    <span class="nav-icon" style="font-size: 1.2rem;">💬</span> Messages
-                </a>
-            </nav>
-
-            <a href="#" class="nav-item" style="margin-bottom: 0;" onclick="firebase.auth().signOut().then(() => window.location.href='login.html')">
-                <span class="nav-icon" style="font-size: 1.2rem;">🚪</span> Sign Out
-            </a>
-        </aside>
+        <!-- Distraction-free Header -->
+        <header class="sales-header">
+            <a href="index.html" class="nav-logo">MSME<span style="color: var(--primary);">growth</span></a>
+            <div style="display: flex; align-items: center; gap: 24px;">
+                <a href="courses.html" class="nav-back">← Back to Portal</a>
+                <button class="btn btn-primary" onclick="window.location.href='checkout.html?service=10x-business-insights&pkg=0&type=course'" style="padding: 10px 20px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer;">Enroll Now</button>
+            </div>
+        </header>
 
         <!-- Main Content Area -->
-        <main class="main-view" id="main-content" style="display: none;">
-            <div class="top-bar">
-                <div style="font-weight: 700; font-size: 1.1rem; color: #fff;">Masterclass Overview</div>
-                <div class="user-profile">
-                    <div style="text-align: right;">
-                        <div style="font-weight: 700;" id="profile-name">Client Name</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">Customer</div>
-                    </div>
-                    <div class="avatar" id="profile-avatar">C</div>
-                </div>
-            </div>
-
+        <main id="main-content" style="display: none; max-width: 1100px; margin: 0 auto; padding-bottom: 120px;">
             <div id="dynamic-container">
                 <!-- Populated dynamically -->
             </div>
@@ -293,8 +252,6 @@
     <script src="js/courses-data.js"></script>
     <script src="js/ui-utils.js"></script>
     <script>
-        const profileName = document.getElementById('profile-name');
-        const profileAvatar = document.getElementById('profile-avatar');
         const mainContent = document.getElementById('main-content');
         const dynamicContainer = document.getElementById('dynamic-container');
 
@@ -308,19 +265,6 @@
                 const layout = document.getElementById('dashboard-layout');
                 if (layout) layout.classList.remove('auth-loading');
                 if (typeof hideAuthLoader === 'function') hideAuthLoader();
-                try {
-                    const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
-                    if (userDoc.exists) {
-                        const userData = userDoc.data();
-                        if (userData.name) {
-                            const firstName = userData.name.split(' ')[0];
-                            if(profileName) profileName.innerText = userData.name;
-                            if(profileAvatar) profileAvatar.innerText = firstName.charAt(0).toUpperCase();
-                        }
-                    }
-                } catch (error) {
-                    console.error("Error fetching user data:", error);
-                }
             } else {
                 window.location.href = 'login.html';
             }
@@ -348,64 +292,85 @@
                     </div>
                 </div>
 
-                <!-- 2. Before / After -->
-                <div class="comparison-section">
-                    <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 32px; text-align: center;">Transform Your Business</h2>
+                <!-- 2. Featured Video Showcase -->
+                <div class="featured-video" onclick="alert('Playing featured showcase teaser...')">
+                    <div style="text-align: center; color: rgba(255,255,255,0.8); z-index: 2; position: relative; padding: 24px;">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px; filter: drop-shadow(0 0 10px rgba(0,163,255,0.4));"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+                        <h3 style="font-size: 1.5rem; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">Watch The 10X Framework Preview</h3>
+                        <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 8px; text-shadow: 0 1px 5px rgba(0,0,0,0.8);">Click to watch how we systematically scale business models.</p>
+                    </div>
+                    <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(180deg, rgba(10,14,23,0.3) 0%, rgba(10,14,23,0.9) 100%), url('https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80'); background-size: cover; background-position: center; opacity: 0.4;"></div>
+                </div>
+
+                <!-- 3. Before / After -->
+                <div class="comparison-section" style="margin-top: 48px;">
+                    <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; text-align: center; color: #fff;">Transform Your Business</h2>
+                    <p style="color: var(--text-muted); text-align: center; max-width: 600px; margin: 0 auto 32px auto;">What will happen to your growth curve if you keep doing things the old way vs adopting modern scaling frameworks?</p>
+                    
                     <div class="comparison-grid">
                         <div class="comparison-card before">
                             <h3 style="color: #ff4757; font-size: 1.25rem; margin-bottom: 12px; font-weight: 700;">❌ Without The Strategy</h3>
-                            <p style="color: var(--text-muted); line-height: 1.6;">Struggling to find leads, wasting money on ads that don't convert, and feeling overwhelmed by generic growth advice that doesn't fit your local business.</p>
+                            <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem;">Struggling to find leads, wasting budget on unoptimized social media ads that don't convert, and feeling overwhelmed by generic advice that doesn't apply to local market landscapes.</p>
                         </div>
                         <div class="comparison-card after">
                             <h3 style="color: var(--secondary); font-size: 1.25rem; margin-bottom: 12px; font-weight: 700;">✅ With 10X Business Insights</h3>
-                            <p style="color: var(--text-muted); line-height: 1.6;">Actionable, step-by-step blueprints. You'll master niche positioning, build an automated customer retention system, and implement high-converting offers immediately.</p>
+                            <p style="color: var(--text-muted); line-height: 1.6; font-size: 0.95rem;">Structured, step-by-step blueprints. You'll master niche positioning, implement automated client acquisition and high-converting customer journeys immediately.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- 3. Pricing & Enrollment Card -->
+                <!-- 4. Pricing & Enrollment Card -->
                 <div class="packages-grid">
                     <div class="package-card">
-                        <div style="background: rgba(0, 163, 255, 0.1); border: 1px solid var(--primary); padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: var(--primary); margin: 0 auto 16px auto; display: table;">Lifetime Access</div>
-                        <h3 style="font-size: 1.6rem; font-weight: 800; text-align: center; color: #fff; margin-bottom: 8px;">${course.name} Masterclass</h3>
-                        <p style="color: var(--text-muted); text-align: center; font-size: 0.9rem; max-width: 320px; margin: 0 auto 16px auto;">Get full access to all 100 strategies and tracking systems.</p>
+                        <div style="background: rgba(255, 71, 87, 0.1); border: 1px solid #ff4757; padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: #ff4757; margin: 0 auto 16px auto; display: table; letter-spacing: 1px;">🔥 90% OFF - LIMITED FLASH SALE</div>
+                        <h3 style="font-size: 1.65rem; font-weight: 800; text-align: center; color: #fff; margin-bottom: 8px;">10X Business Insights</h3>
+                        <p style="color: var(--text-muted); text-align: center; font-size: 0.9rem; max-width: 320px; margin: 0 auto 16px auto;">Get full lifetime access to all 100 growth strategies and interactive scorecards.</p>
                         
-                        <div class="package-price">${pkg.price}</div>
-                        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-align: center; margin-bottom: 32px;">⚡ ${pkg.delivery}</div>
+                        <div style="text-align: center; margin: 24px 0; display: flex; justify-content: center; align-items: baseline; gap: 12px;">
+                            <span style="font-size: 1.3rem; text-decoration: line-through; color: var(--text-muted); font-weight: 600;">LKR 15,000</span>
+                            <span class="package-price">${pkg.price}</span>
+                        </div>
+
+                        <div style="background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.2); padding: 12px; border-radius: 8px; margin-bottom: 24px; text-align: center; font-size: 0.85rem; color: #FFD700; font-weight: 700;">
+                            ⏳ Limited Time: Offer only available for this month!
+                        </div>
                         
                         <button class="btn-sales" onclick="window.location.href='checkout.html?service=${course.id}&pkg=0&type=course'">
-                            Enroll in Masterclass
+                            Claim Offer & Enroll Now
                         </button>
                     </div>
                 </div>
-                <!-- 4. Course Syllabus Structure -->
-                <div style="max-width: 900px; margin: 64px auto; padding: 0 24px;">
-                    <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 32px; text-align: center;">Course Curriculum (10 Modules)</h2>
+
+                <!-- 5. Course Syllabus Structure -->
+                <div style="max-width: 900px; margin: 80px auto; padding: 0 24px;">
+                    <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; text-align: center; color: #fff;">Course Curriculum (10 Modules)</h2>
+                    <p style="color: var(--text-muted); text-align: center; max-width: 600px; margin: 0 auto 32px auto;">100 step-by-step blueprints divided into 10 structured, bite-sized sections.</p>
+                    
                     <div style="display: flex; flex-direction: column; gap: 16px;">
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <h4 style="color: #fff; font-size: 1.1rem;">Module 1: The Foundation</h4>
+                                <h4 style="color: #fff; font-size: 1.1rem; font-weight: 700;">Module 1: The Foundation</h4>
                                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Unfair Advantage & Positioning (10 strategies)</p>
                             </div>
                         </div>
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <h4 style="color: #fff; font-size: 1.1rem;">Module 2: Hyper-Retention</h4>
+                                <h4 style="color: #fff; font-size: 1.1rem; font-weight: 700;">Module 2: Hyper-Retention</h4>
                                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">The Hidden Goldmine of existing clients (10 strategies)</p>
                             </div>
                         </div>
                         <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
                             <div>
-                                <h4 style="color: #fff; font-size: 1.1rem;">Modules 3-10: Advanced scaling, sales funnel, ads & systems</h4>
+                                <h4 style="color: #fff; font-size: 1.1rem; font-weight: 700;">Modules 3-10: Advanced Scaling, Sales Funnels, Ads & Systems</h4>
                                 <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Unlock 80 remaining blueprints</p>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- 5. FAQs -->
+                <!-- 6. FAQs -->
                 <div class="faq-section">
-                    <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 32px; text-align: center;">Frequently Asked Questions</h2>
+                    <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 32px; text-align: center; color: #fff;">Frequently Asked Questions</h2>
                     <div class="faq-container">
                         ${course.faqs.map(f => `
                             <div class="faq-item">
