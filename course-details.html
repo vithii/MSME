@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masterclass Details | MSMEgrowth</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        .dashboard-layout {
+            display: flex;
+            min-height: 100vh;
+            background: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .sidebar {
+            width: 280px;
+            background: rgba(10, 14, 23, 0.95);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: var(--text-muted);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .nav-icon {
+            width: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.03);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            border-left: 3px solid var(--primary);
+            background: rgba(0, 163, 255, 0.05);
+        }
+
+        .main-view {
+            flex-grow: 1;
+            margin-left: 280px;
+            padding: 0;
+            padding-bottom: 120px;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 48px;
+            background: rgba(10,10,15,0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .sales-hero {
+            padding: 40px 48px 24px 48px;
+            text-align: center;
+        }
+
+        .headline {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 16px;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .subheadline {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto 32px auto;
+            line-height: 1.6;
+        }
+
+        .benefits-list {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #fff;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 10px 20px;
+            border-radius: 30px;
+        }
+
+        /* Package styling */
+        .packages-grid {
+            display: flex;
+            justify-content: center;
+            margin: 48px auto;
+            max-width: 480px;
+            padding: 0 24px;
+        }
+
+        .package-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 163, 255, 0.1);
+        }
+
+        .package-price {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #fff;
+            margin: 16px 0;
+            text-align: center;
+        }
+
+        .btn-sales {
+            width: 100%;
+            background: var(--gradient-brand);
+            color: #fff;
+            padding: 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            text-align: center;
+            text-decoration: none;
+            box-shadow: 0 10px 20px rgba(0,163,255,0.2);
+        }
+
+        .btn-sales:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(6, 217, 160, 0.3);
+        }
+
+        /* Before / After and Contents Styles */
+        .comparison-section {
+            max-width: 900px;
+            margin: 64px auto;
+            padding: 0 24px;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .comparison-card {
+            padding: 32px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .comparison-card.before {
+            background: rgba(255, 71, 87, 0.02);
+            border-color: rgba(255, 71, 87, 0.1);
+        }
+
+        .comparison-card.after {
+            background: rgba(6, 217, 160, 0.02);
+            border-color: rgba(6, 217, 160, 0.1);
+        }
+
+        .faq-section {
+            max-width: 800px;
+            margin: 64px auto;
+            padding: 0 24px;
+        }
+
+        .faq-item {
+            margin-bottom: 24px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 24px;
+        }
+
+        .faq-q {
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .faq-a {
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .main-view {
+                margin-left: 0;
+            }
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            .headline {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-layout auth-loading" id="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <a href="index.html" class="nav-logo" style="margin-bottom: 48px; display: block;">MSME<span style="color: var(--primary);">growth</span></a>
+            
+            <nav style="flex-grow: 1;">
+                <a href="dashboard.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">⚡</span> Active Dashboard
+                </a>
+                <a href="services.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">🛍️</span> Service Catalog
+                </a>
+                <a href="courses.html" class="nav-item active">
+                    <span class="nav-icon" style="font-size: 1.2rem;">🎓</span> My Masterclasses
+                </a>
+                <a href="messages.html" class="nav-item">
+                    <span class="nav-icon" style="font-size: 1.2rem;">💬</span> Messages
+                </a>
+            </nav>
+
+            <a href="#" class="nav-item" style="margin-bottom: 0;" onclick="firebase.auth().signOut().then(() => window.location.href='login.html')">
+                <span class="nav-icon" style="font-size: 1.2rem;">🚪</span> Sign Out
+            </a>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-view" id="main-content" style="display: none;">
+            <div class="top-bar">
+                <div style="font-weight: 700; font-size: 1.1rem; color: #fff;">Masterclass Overview</div>
+                <div class="user-profile">
+                    <div style="text-align: right;">
+                        <div style="font-weight: 700;" id="profile-name">Client Name</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Customer</div>
+                    </div>
+                    <div class="avatar" id="profile-avatar">C</div>
+                </div>
+            </div>
+
+            <div id="dynamic-container">
+                <!-- Populated dynamically -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    
+    <script src="js/firebase-config.js"></script>
+    <script src="js/courses-data.js"></script>
+    <script src="js/ui-utils.js"></script>
+    <script>
+        const profileName = document.getElementById('profile-name');
+        const profileAvatar = document.getElementById('profile-avatar');
+        const mainContent = document.getElementById('main-content');
+        const dynamicContainer = document.getElementById('dynamic-container');
+
+        // Extract ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const courseId = urlParams.get('id') || '10x-business-insights';
+        const course = coursesData[courseId];
+
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                const layout = document.getElementById('dashboard-layout');
+                if (layout) layout.classList.remove('auth-loading');
+                if (typeof hideAuthLoader === 'function') hideAuthLoader();
+                try {
+                    const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        if (userData.name) {
+                            const firstName = userData.name.split(' ')[0];
+                            if(profileName) profileName.innerText = userData.name;
+                            if(profileAvatar) profileAvatar.innerText = firstName.charAt(0).toUpperCase();
+                        }
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            } else {
+                window.location.href = 'login.html';
+            }
+        });
+
+        if (!course) {
+            dynamicContainer.innerHTML = `<h1 style="text-align:center; padding: 100px; color: var(--text-muted); font-weight: 500;">Masterclass not found.</h1>`;
+            mainContent.style.display = 'block';
+        } else {
+            const pkg = course.packages[0];
+            let html = `
+                <!-- 1. Hero -->
+                <div class="sales-hero">
+                    <div style="font-size: 3.5rem; margin-bottom: 24px;">${course.icon}</div>
+                    <h1 class="headline" style="max-width: 900px; margin: 0 auto 16px auto;">${course.heroHeadline}</h1>
+                    <p class="subheadline">${course.description}</p>
+                    
+                    <div class="benefits-list">
+                        ${course.benefits.map(b => `
+                            <div class="benefit-item">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                ${b}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                <!-- 2. Before / After -->
+                <div class="comparison-section">
+                    <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 32px; text-align: center;">Transform Your Business</h2>
+                    <div class="comparison-grid">
+                        <div class="comparison-card before">
+                            <h3 style="color: #ff4757; font-size: 1.25rem; margin-bottom: 12px; font-weight: 700;">❌ Without The Strategy</h3>
+                            <p style="color: var(--text-muted); line-height: 1.6;">Struggling to find leads, wasting money on ads that don't convert, and feeling overwhelmed by generic growth advice that doesn't fit your local business.</p>
+                        </div>
+                        <div class="comparison-card after">
+                            <h3 style="color: var(--secondary); font-size: 1.25rem; margin-bottom: 12px; font-weight: 700;">✅ With 10X Business Insights</h3>
+                            <p style="color: var(--text-muted); line-height: 1.6;">Actionable, step-by-step blueprints. You'll master niche positioning, build an automated customer retention system, and implement high-converting offers immediately.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Pricing & Enrollment Card -->
+                <div class="packages-grid">
+                    <div class="package-card">
+                        <div style="background: rgba(0, 163, 255, 0.1); border: 1px solid var(--primary); padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: var(--primary); margin: 0 auto 16px auto; display: table;">Lifetime Access</div>
+                        <h3 style="font-size: 1.6rem; font-weight: 800; text-align: center; color: #fff; margin-bottom: 8px;">${course.name} Masterclass</h3>
+                        <p style="color: var(--text-muted); text-align: center; font-size: 0.9rem; max-width: 320px; margin: 0 auto 16px auto;">Get full access to all 100 strategies and tracking systems.</p>
+                        
+                        <div class="package-price">${pkg.price}</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; text-align: center; margin-bottom: 32px;">⚡ ${pkg.delivery}</div>
+                        
+                        <button class="btn-sales" onclick="window.location.href='checkout.html?service=${course.id}&pkg=0&type=course'">
+                            Enroll in Masterclass
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. Course Syllabus Structure -->
+                <div style="max-width: 900px; margin: 64px auto; padding: 0 24px;">
+                    <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 32px; text-align: center;">Course Curriculum (10 Modules)</h2>
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="color: #fff; font-size: 1.1rem;">Module 1: The Foundation</h4>
+                                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Unfair Advantage & Positioning (10 strategies)</p>
+                            </div>
+                            <span style="color: var(--secondary); font-weight: 700; font-size: 0.85rem; background: rgba(6,217,160,0.1); padding: 4px 12px; border-radius: 12px;">🔓 Free Preview</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="color: #fff; font-size: 1.1rem;">Module 2: Hyper-Retention</h4>
+                                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">The Hidden Goldmine of existing clients (10 strategies)</p>
+                            </div>
+                            <span style="color: var(--secondary); font-weight: 700; font-size: 0.85rem; background: rgba(6,217,160,0.1); padding: 4px 12px; border-radius: 12px;">🔓 Free Preview</span>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 20px; display: flex; justify-content: space-between; align-items: center; opacity: 0.7;">
+                            <div>
+                                <h4 style="color: rgba(255,255,255,0.8); font-size: 1.1rem;">Modules 3-10: Advanced scaling, sales funnel, ads & systems</h4>
+                                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 4px;">Unlock 80 remaining blueprints</p>
+                            </div>
+                            <span style="color: var(--text-muted); font-weight: 700; font-size: 0.85rem; background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 12px;">🔒 Unlocks on Payment</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. FAQs -->
+                <div class="faq-section">
+                    <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 32px; text-align: center;">Frequently Asked Questions</h2>
+                    <div class="faq-container">
+                        ${course.faqs.map(f => `
+                            <div class="faq-item">
+                                <div class="faq-q">${f.q}</div>
+                                <div class="faq-a">${f.a}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            dynamicContainer.innerHTML = html;
+            mainContent.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

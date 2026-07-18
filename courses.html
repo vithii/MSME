@@ -164,19 +164,8 @@
                 </div>
             </div>
 
-            <div class="grid">
-                <!-- Course 1 -->
-                <div class="card glass course-card">
-                    <div class="course-image">🚀</div>
-                    <div style="padding: 32px; flex-grow: 1; display: flex; flex-direction: column;">
-                        <div style="font-size: 0.8rem; color: var(--secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; font-weight: 700;">Owned</div>
-                        <h2 style="font-size: 1.6rem; margin-bottom: 16px;">10X Business Insights</h2>
-                        <p style="color: var(--text-muted); margin-bottom: 32px; font-size: 0.95rem; line-height: 1.6; flex-grow: 1;">
-                            Learn 100 practical growth strategies to dominate your market. This interactive masterclass guides you through hyper-retention, scalable foundations, and market positioning.
-                        </p>
-                        <a href="course.html" class="btn btn-primary" style="text-align: center; width: 100%;">Enter Masterclass</a>
-                    </div>
-                </div>
+            <div class="grid" id="courses-container">
+                <!-- Dynamic cards rendered by JS -->
             </div>
 
         </main>
@@ -192,6 +181,7 @@
     <script>
         const profileName = document.getElementById('profile-name');
         const profileAvatar = document.getElementById('profile-avatar');
+        const coursesContainer = document.getElementById('courses-container');
 
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
@@ -211,6 +201,62 @@
                 } catch (error) {
                     console.error("Error fetching user data:", error);
                 }
+
+                // Query course purchase order status dynamically
+                const courseId = "10x-business-insights";
+                firebase.firestore().collection('orders')
+                    .where('clientId', '==', user.uid)
+                    .where('serviceId', '==', courseId)
+                    .onSnapshot((snapshot) => {
+                        let statusText = "Not Enrolled";
+                        let statusColor = "var(--text-muted)";
+                        let buttonText = "Get Lifetime Access (LKR 1,500)";
+                        let buttonLink = `course-details.html?id=${courseId}`;
+                        let isOwned = false;
+
+                        if (!snapshot.empty) {
+                            let activeOrder = null;
+                            snapshot.forEach(doc => {
+                                const order = doc.data();
+                                // Completed or Active order is preferred
+                                if (order.status === 'Completed' || order.status === 'Active') {
+                                    activeOrder = order;
+                                } else if (!activeOrder) {
+                                    activeOrder = order; // Fallback to pending
+                                }
+                            });
+
+                            if (activeOrder) {
+                                isOwned = true;
+                                if (activeOrder.status === 'Completed' || activeOrder.status === 'Active') {
+                                    statusText = "Owned";
+                                    statusColor = "var(--secondary)";
+                                    buttonText = "Enter Masterclass";
+                                    buttonLink = "course.html";
+                                } else if (activeOrder.status === 'Pending Verification') {
+                                    statusText = "Pending Verification";
+                                    statusColor = "#feca57";
+                                    buttonText = "Enter Masterclass (2 Modules)";
+                                    buttonLink = "course.html";
+                                }
+                            }
+                        }
+
+                        coursesContainer.innerHTML = `
+                            <div class="card glass course-card" style="max-width: 380px;">
+                                <div class="course-image" style="height: 120px; font-size: 2.5rem;">🚀</div>
+                                <div style="padding: 20px; flex-grow: 1; display: flex; flex-direction: column;">
+                                    <div style="font-size: 0.8rem; color: ${statusColor}; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; font-weight: 700;">${statusText}</div>
+                                    <h2 style="font-size: 1.35rem; margin-bottom: 8px; color: #fff;">10X Business Insights</h2>
+                                    <p style="color: var(--text-muted); margin-bottom: 24px; font-size: 0.85rem; line-height: 1.5; flex-grow: 1;">
+                                        Learn 100 practical growth strategies to dominate your market. This interactive masterclass guides you through hyper-retention, scalable foundations, and market positioning.
+                                    </p>
+                                    <a href="${buttonLink}" class="btn btn-primary" style="text-align: center; width: 100%; padding: 10px 16px; font-size: 0.85rem;">${buttonText}</a>
+                                </div>
+                            </div>
+                        `;
+                    });
+
             } else {
                 window.location.href = 'login.html';
             }

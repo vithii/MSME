@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+window.initCourseApp = () => {
     // State management
     const appState = {
         currentView: 'home', // 'home', 'guide', 'scorecard'
@@ -54,6 +54,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Routing
     window.app = {
         navigate: (view, sectionId = null, pointId = null) => {
+            if (window.courseAccess === 'pending' && sectionId && sectionId > 2) {
+                if (typeof showToast === 'function') {
+                    showToast("⚠️ Verification Pending. Please wait for admin approval to unlock this module.", "error");
+                } else {
+                    alert("⚠️ Verification Pending. Please wait for admin approval to unlock this module.");
+                }
+                return;
+            }
             appState.currentView = view;
             if (sectionId) appState.currentSectionId = sectionId;
             if (pointId) appState.currentPointId = pointId;
@@ -84,14 +92,24 @@ document.addEventListener('DOMContentLoaded', () => {
             let isExpanded = appState.currentSectionId === section.id;
             let borderColor = isExpanded ? 'var(--primary)' : 'rgba(255,255,255,0.05)';
             
+            // Check if section is locked for pending users
+            const isLocked = window.courseAccess === 'pending' && section.id > 2;
+            let clickAction = isLocked 
+                ? `if(typeof showToast==='function') showToast('⚠️ Verification Pending. Please wait for admin approval to unlock this module.', 'error');`
+                : `app.navigate('${appState.currentView === 'scorecard' ? 'home' : appState.currentView}', ${section.id}, null)`;
+            
+            let statusBadge = isLocked 
+                ? `🔒 Locked`
+                : `${completed}/${section.points.length}`;
+            
             html += `
-                <div style="background: rgba(255,255,255,0.02); border: 1px solid ${borderColor}; border-radius: 8px; overflow: hidden; transition: all 0.3s ease;">
-                    <div style="padding: 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="app.navigate('${appState.currentView === 'scorecard' ? 'home' : appState.currentView}', ${section.id}, null)">
+                <div style="background: rgba(255,255,255,0.02); border: 1px solid ${borderColor}; border-radius: 8px; overflow: hidden; transition: all 0.3s ease; ${isLocked ? 'opacity: 0.6;' : ''}">
+                    <div style="padding: 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="${clickAction}">
                         <div>
                             <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; margin-bottom: 4px;">Module ${sIndex + 1}</div>
                             <h3 style="font-size: 0.95rem; font-weight: 600; color: #fff;">${section.title}</h3>
                         </div>
-                        <div style="font-size: 0.8rem; font-weight: 700; color: ${completed === section.points.length ? 'var(--secondary)' : 'var(--text-muted)'}; ml-2 whitespace-nowrap">${completed}/${section.points.length}</div>
+                        <div style="font-size: 0.8rem; font-weight: 700; color: ${isLocked ? '#feca57' : (completed === section.points.length ? 'var(--secondary)' : 'var(--text-muted)')}; ml-2 whitespace-nowrap">${statusBadge}</div>
                     </div>
             `;
             
@@ -125,6 +143,18 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         sidebarRoot.innerHTML = html;
+    }
+
+    function getPendingBanner() {
+        if (window.courseAccess === 'pending') {
+            return `
+                <div style="background: rgba(254, 202, 87, 0.05); border: 1px solid rgba(254, 202, 87, 0.2); padding: 16px 24px; border-radius: 8px; margin: 24px 32px 0 32px; display: flex; align-items: center; gap: 12px; font-weight: 600; color: #feca57; font-size: 0.85rem; text-align: left;">
+                    <span style="font-size: 1.2rem;">⚠️</span>
+                    <div>Payment verification is pending. You currently have preview access to Modules 1 and 2. Once verified, all 10 modules will unlock.</div>
+                </div>
+            `;
+        }
+        return '';
     }
 
     function renderView() {
@@ -161,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
-            viewRoot.innerHTML = html;
+            viewRoot.innerHTML = getPendingBanner() + html;
         } else if (appState.currentView === 'guide' && appState.currentPointId) {
             const section = ebookData.sections.find(s => s.id === appState.currentSectionId);
             const point = section.points.find(p => p.id === appState.currentPointId);
@@ -273,18 +303,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             `;
-            viewRoot.innerHTML = html;
+            viewRoot.innerHTML = getPendingBanner() + html;
         }
     }
 
-    // Delay init slightly to ensure ebookData is loaded from the other scripts
-    setTimeout(() => {
-        if(typeof ebookData !== 'undefined') {
-            renderSidebar();
-            renderView();
-            updateProgressUI();
-        } else {
-            console.error("ebookData is not defined. Ensure content.js files are loaded before app.js");
-        }
-    }, 100);
-});
+    // Initialize immediately when called
+    if(typeof ebookData !== 'undefined') {
+        renderSidebar();
+        renderView();
+        updateProgressUI();
+    } else {
+        console.error("ebookData is not defined. Ensure content.js files are loaded before app.js");
+    }
+};

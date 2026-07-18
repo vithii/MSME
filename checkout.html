@@ -393,7 +393,7 @@
                     </div>
 
                     <div style="margin-top: 60px;">
-                        <button class="btn-primary" style="max-width: 300px; padding: 12px 24px; font-size: 0.95rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer;" onclick="goToWorkspace()">Go to Project Workspace →</button>
+                        <button id="workspace-btn" class="btn-primary" style="max-width: 300px; padding: 12px 24px; font-size: 0.95rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer;" onclick="goToWorkspace()">Go to Project Workspace →</button>
                     </div>
 
                 </div>
@@ -410,6 +410,7 @@
     <script src="js/firebase-config.js"></script>
     <script src="js/ui-utils.js"></script>
     <script src="js/services-data.js"></script>
+    <script src="js/courses-data.js"></script>
 
     <script>
         // Check Authentication
@@ -421,12 +422,14 @@
             }
         });
 
-        // Load specific service details from URL
+        // Load specific service/course details from URL
         const urlParams = new URLSearchParams(window.location.search);
         const serviceId = urlParams.get('service');
         const pkgIndex = parseInt(urlParams.get('pkg'));
+        const checkoutType = urlParams.get('type') || 'service';
         
-        const service = servicesData[serviceId];
+        const isCourse = checkoutType === 'course';
+        const service = isCourse ? coursesData[serviceId] : servicesData[serviceId];
         let currentPackage = null;
         let generatedOrderNum = "ORD-" + Math.floor(1000 + Math.random() * 9000);
         let createdDocId = null;
@@ -441,8 +444,37 @@
             document.getElementById('checkout-total').innerText = currentPackage.price;
             document.getElementById('checkout-order-num').innerText = "#" + generatedOrderNum;
         } else {
-            alert("Invalid service selected. Redirecting to catalog.");
-            window.location.href = "services.html";
+            alert("Invalid item selected. Redirecting.");
+            window.location.href = isCourse ? "courses.html" : "services.html";
+        }
+
+        // Reshape form dynamically if this is a Course Enrollment
+        if (isCourse) {
+            // Change step labels
+            const stepLabel = document.querySelector('#nav-step-1 .w-step-label');
+            if (stepLabel) stepLabel.innerText = "Enrollment Details";
+            
+            // Change inputs
+            const nameLabel = document.querySelector('.form-group .form-label');
+            if (nameLabel) nameLabel.innerText = "Full Name";
+            const nameInput = document.getElementById('bus-name');
+            if (nameInput) nameInput.placeholder = "e.g. John Doe";
+
+            // Hide social and drive fields
+            const socialInput = document.getElementById('bus-social');
+            if (socialInput) socialInput.parentNode.style.display = 'none';
+            const driveInput = document.getElementById('bus-drive');
+            if (driveInput) driveInput.parentNode.style.display = 'none';
+
+            // Change main description texts
+            document.querySelector('.checkout-container h1').innerText = "Secure Masterclass Enrollment";
+            document.querySelector('.checkout-container p').innerText = "Complete your enrollment to start learning.";
+            document.querySelector('#step-1 h2').innerText = "Enrollment Requirements";
+            document.querySelector('#step-1 p').innerText = "Provide your name to register for the masterclass player.";
+            
+            // Update step 3 workspace button text
+            const wsBtn = document.getElementById('workspace-btn');
+            if (wsBtn) wsBtn.innerText = "Go to My Masterclasses →";
         }
 
         // Navigation Logic
@@ -498,10 +530,11 @@
                     pkgIndex: pkgIndex,
                     pkgTitle: currentPackage.title,
                     price: currentPackage.price,
-                    pkgIndex: pkgIndex,
-                    pkgTitle: currentPackage.title,
-                    price: currentPackage.price,
                     businessName: document.getElementById('bus-name').value,
+                    socialMedia: isCourse ? 'N/A' : document.getElementById('bus-social').value,
+                    driveFolder: isCourse ? 'N/A' : document.getElementById('bus-drive').value,
+                    additionalNotes: document.getElementById('bus-notes').value || 'N/A',
+                    itemType: isCourse ? 'course' : 'service',
                     status: "Pending Verification",
                     createdAt: new Date().getTime(),
                     dateString: new Date().toLocaleDateString()
@@ -531,7 +564,9 @@
         }
 
         function goToWorkspace() {
-            if (createdDocId) {
+            if (isCourse) {
+                window.location.href = `courses.html`;
+            } else if (createdDocId) {
                 window.location.href = `project.html?service=${serviceId}&pkg=${pkgIndex}&order=${generatedOrderNum}&docId=${createdDocId}`;
             } else {
                 window.location.href = `project.html?service=${serviceId}&pkg=${pkgIndex}&order=${generatedOrderNum}`;
