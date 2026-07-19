@@ -161,13 +161,9 @@
         }
 
         .fiverr-cost-per {
-            font-size: 0.75rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
-            background: rgba(255, 255, 255, 0.05);
-            padding: 4px 8px;
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            font-weight: 700;
+            font-weight: 500;
         }
 
         .fiverr-delivery-badge {
@@ -941,14 +937,12 @@
                         ${tabsHtml}
                     </div>
                     <div class="fiverr-widget-body">
-                         ${pkg.badge ? `<div style="background: rgba(6, 217, 160, 0.1); border: 1px solid var(--secondary); padding: 6px 12px; border-radius: 20px; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: var(--secondary); margin-bottom: 16px; display: table; letter-spacing: 1px;">🔥 ${pkg.badge} SAVINGS</div>` : ''}
-                        
-                        <div class="fiverr-price-row">
-                            <div>
-                                ${showDiscount ? `<span style="font-size: 1.15rem; text-decoration: line-through; color: rgba(255,255,255,0.4); font-weight: 600; margin-right: 8px;">${originalPriceFormatted}</span>` : ''}
-                                <span class="fiverr-price" style="color: var(--secondary) !important;">${pkg.price}</span>
+                        <div class="fiverr-price-row" style="flex-direction: column; align-items: flex-start; gap: 4px; margin-bottom: 16px;">
+                            <div style="display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;">
+                                ${showDiscount ? `<span style="font-size: 1.15rem; text-decoration: line-through; color: rgba(255,255,255,0.4); font-weight: 600; white-space: nowrap;">${originalPriceFormatted}</span>` : ''}
+                                <span class="fiverr-price" style="color: var(--secondary) !important; white-space: nowrap;">${pkg.price}</span>
                             </div>
-                            <span class="fiverr-cost-per">${pkg.costPer}</span>
+                            ${pkg.costPer ? `<span class="fiverr-cost-per" style="white-space: nowrap;">(${pkg.costPer})</span>` : ''}
                         </div>
                         
                         <div class="fiverr-delivery-badge">
