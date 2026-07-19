@@ -69,3 +69,20 @@ function hideAuthLoader() {
         }, 500);
     }
 }
+
+// 4. Google Drive URL Embed Helper
+function getGoogleDriveEmbedUrl(url) {
+    if (!url) return '';
+    // Look for /file/d/FILE_ID/
+    let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) {
+        return `https://drive.google.com/file/d/${match[1]}/preview`;
+    }
+    // Look for id=FILE_ID
+    match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) {
+        return `https://drive.google.com/file/d/${match[1]}/preview`;
+    }
+    return url; // fallback to original url if not drive
+}
+
