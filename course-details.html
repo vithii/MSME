@@ -507,6 +507,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const courseId = urlParams.get('id') || '10x-business-insights';
         const course = coursesData[courseId];
+        let pkg = course ? course.packages[0] : null;
 
         firebase.auth().onAuthStateChanged(async (user) => {
             if (user) {
@@ -559,7 +560,6 @@
             dynamicContainer.innerHTML = `<h1 style="text-align:center; padding: 100px; color: var(--text-muted); font-weight: 500;">Masterclass not found.</h1>`;
             mainContent.style.display = 'block';
         } else {
-            const pkg = course.packages[0];
             
             // Build Page Layout
             let html = `
