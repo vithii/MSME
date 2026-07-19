@@ -701,12 +701,8 @@
             
             <div class="top-bar" style="padding: 16px 48px;">
                 <a href="services.html" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(255,255,255,0.1); color: var(--text-muted);">← Back</a>
-                <div class="user-profile" style="display: flex; align-items: center; gap: 12px;">
-                    <div style="text-align: right;">
-                        <div style="font-weight: 600; font-size: 0.95rem; color: #fff;" id="profile-name">Client Name</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted);">Client Account</div>
-                    </div>
-                    <div id="profile-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-brand); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,163,255,0.25);">C</div>
+                <div id="topbar-user-profile" style="display: flex; align-items: center; gap: 12px;">
+                    <!-- Rendered dynamically -->
                 </div>
             </div>
 
@@ -727,8 +723,7 @@
     <script src="js/services-data.js"></script>
     
     <script>
-        const profileName = document.getElementById('profile-name');
-        const profileAvatar = document.getElementById('profile-avatar');
+        const topbarUserProfile = document.getElementById('topbar-user-profile');
         const mainContent = document.getElementById('main-content');
         const dynamicContainer = document.getElementById('dynamic-container');
 
@@ -738,22 +733,41 @@
         const service = servicesData[serviceId];
 
         firebase.auth().onAuthStateChanged(async (user) => {
+            const layout = document.getElementById('dashboard-layout');
+            if (layout) layout.classList.remove('auth-loading');
+            if (typeof hideAuthLoader === 'function') hideAuthLoader();
+            if (mainContent) mainContent.style.display = 'block';
+
             if (user) {
                 try {
                     const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                    let name = user.email;
+                    let initial = "C";
                     if (userDoc.exists) {
                         const userData = userDoc.data();
                         if (userData.name) {
-                            const firstName = userData.name.split(' ')[0];
-                            if(profileName) profileName.innerText = userData.name;
-                            if(profileAvatar) profileAvatar.innerText = firstName.charAt(0).toUpperCase();
+                            name = userData.name;
+                            initial = name.charAt(0).toUpperCase();
                         }
+                    }
+                    if (topbarUserProfile) {
+                        topbarUserProfile.innerHTML = `
+                            <div style="text-align: right;">
+                                <div style="font-weight: 600; font-size: 0.95rem; color: #fff;">${name}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Client Account</div>
+                            </div>
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-brand); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,163,255,0.25);">${initial}</div>
+                        `;
                     }
                 } catch (error) {
                     console.error("Error fetching user data:", error);
                 }
             } else {
-                window.location.href = 'login.html';
+                if (topbarUserProfile) {
+                    topbarUserProfile.innerHTML = `
+                        <a href="login.html?redirect=${encodeURIComponent(window.location.href)}" class="btn" style="background: var(--gradient-brand); color: #fff; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none; border: none; box-shadow: 0 4px 10px rgba(0,163,255,0.25);">Sign In</a>
+                    `;
+                }
             }
         });        let activePkgIndex = 0;
         function renderFiverrPackageWidget() {

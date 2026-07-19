@@ -11,6 +11,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // Check if already logged in
     auth.onAuthStateChanged(async (user) => {
         if (user) {
+            // Check if there is a redirect URL in the query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const redirectUrl = urlParams.get('redirect');
+
+            if (redirectUrl) {
+                window.location.href = decodeURIComponent(redirectUrl);
+                return;
+            }
+
             try {
                 const teamQuery = await db.collection('team').where('email', '==', user.email).get();
                 if (!teamQuery.empty) {

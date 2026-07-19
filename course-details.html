@@ -510,13 +510,9 @@
         let pkg = course ? course.packages[0] : null;
 
         firebase.auth().onAuthStateChanged(async (user) => {
-            if (user) {
-                const layout = document.getElementById('dashboard-layout');
-                if (layout) layout.classList.remove('auth-loading');
-                if (typeof hideAuthLoader === 'function') hideAuthLoader();
-            } else {
-                window.location.href = 'login.html';
-            }
+            const layout = document.getElementById('dashboard-layout');
+            if (layout) layout.classList.remove('auth-loading');
+            if (typeof hideAuthLoader === 'function') hideAuthLoader();
         });
 
         function renderCourseFiverrPackageWidget() {

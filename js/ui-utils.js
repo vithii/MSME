@@ -179,6 +179,19 @@ function initSharedLayout(activePage, pageSubtitle) {
     
     firebase.auth().onAuthStateChanged(async (user) => {
         if (!user) {
+            if (activePage === 'services' || activePage === 'courses') {
+                const layout = document.getElementById('dashboard-layout');
+                if (layout) layout.classList.remove('auth-loading');
+                if (typeof hideAuthLoader === 'function') hideAuthLoader();
+                
+                const profileContainer = document.querySelector('.top-bar .user-profile');
+                if (profileContainer) {
+                    profileContainer.innerHTML = `
+                        <a href="login.html?redirect=${encodeURIComponent(window.location.href)}" class="btn" style="background: var(--gradient-brand); color: #fff; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none; border: none; box-shadow: 0 4px 10px rgba(0,163,255,0.25);">Sign In</a>
+                    `;
+                }
+                return;
+            }
             window.location.href = 'login.html';
             return;
         }
