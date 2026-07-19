@@ -86,3 +86,25 @@ function getGoogleDriveEmbedUrl(url) {
     return url; // fallback to original url if not drive
 }
 
+// 5. Google Drive Thumbnail Helper
+function getGoogleDriveThumbnailUrl(url, width = 600) {
+    if (!url) return '';
+    let fileId = '';
+    // Look for /file/d/FILE_ID/
+    let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) {
+        fileId = match[1];
+    } else {
+        // Look for id=FILE_ID
+        match = url.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (match && match[1]) {
+            fileId = match[1];
+        }
+    }
+    if (fileId) {
+        return `https://drive.google.com/thumbnail?id=${fileId}&sz=w${width}`;
+    }
+    return '';
+}
+
+
