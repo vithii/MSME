@@ -479,7 +479,9 @@
             <a href="index.html" class="nav-logo">MSME<span style="color: var(--primary);">growth</span></a>
             <div style="display: flex; align-items: center; gap: 24px;">
                 <a href="courses.html" class="nav-back">← Back to Portal</a>
-                <button class="btn btn-primary" onclick="window.location.href='checkout.html?service=10x-business-insights&pkg=0&type=course'" style="padding: 10px 20px; font-size: 0.85rem; font-weight: 700; border-radius: 8px; border: none; cursor: pointer;">Enroll Now</button>
+                <div id="topbar-user-profile" style="display: flex; align-items: center; gap: 12px;">
+                    <!-- Rendered dynamically -->
+                </div>
             </div>
         </header>
 
@@ -509,10 +511,44 @@
         const course = coursesData[courseId];
         let pkg = course ? course.packages[0] : null;
 
+        const topbarUserProfile = document.getElementById('topbar-user-profile');
+
         firebase.auth().onAuthStateChanged(async (user) => {
             const layout = document.getElementById('dashboard-layout');
             if (layout) layout.classList.remove('auth-loading');
             if (typeof hideAuthLoader === 'function') hideAuthLoader();
+
+            if (user) {
+                try {
+                    const userDoc = await firebase.firestore().collection('users').doc(user.uid).get();
+                    let name = user.email;
+                    let initial = "C";
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        if (userData.name) {
+                            name = userData.name;
+                            initial = name.charAt(0).toUpperCase();
+                        }
+                    }
+                    if (topbarUserProfile) {
+                        topbarUserProfile.innerHTML = `
+                            <div style="text-align: right;">
+                                <div style="font-weight: 600; font-size: 0.95rem; color: #fff;">${name}</div>
+                                <div style="font-size: 0.8rem; color: var(--text-muted);">Client Account</div>
+                            </div>
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-brand); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,163,255,0.25);">${initial}</div>
+                        `;
+                    }
+                } catch (error) {
+                    console.error("Error fetching user data:", error);
+                }
+            } else {
+                if (topbarUserProfile) {
+                    topbarUserProfile.innerHTML = `
+                        <a href="login.html?redirect=${encodeURIComponent(window.location.href)}" class="btn" style="background: var(--gradient-brand); color: #fff; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none; border: none; box-shadow: 0 4px 10px rgba(0,163,255,0.25);">Sign In</a>
+                    `;
+                }
+            }
         });
 
         function renderCourseFiverrPackageWidget() {
