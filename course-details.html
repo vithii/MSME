@@ -615,8 +615,18 @@
                             ⚡ Lifetime Access & Updates
                         </div>
 
-                        <div style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px;">
+                        <div style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 16px;">
                             Get full lifetime access to all 100 growth strategies, active progress dashboard, and interactive action checklist tasks.
+                        </div>
+
+                        <!-- Included Features List -->
+                        <div class="widget-features-list" style="margin-top: 16px; margin-bottom: 20px; display: flex; flex-direction: column; gap: 8px; text-align: left;">
+                            ${course.benefits.map(b => `
+                                <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: rgba(255,255,255,0.85); font-weight: 500;">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                    ${b}
+                                </div>
+                            `).join('')}
                         </div>
 
                         <button class="fiverr-continue-btn" onclick="window.location.href='checkout.html?service=${course.id}&pkg=0&type=course'">
