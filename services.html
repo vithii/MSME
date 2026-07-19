@@ -96,104 +96,174 @@
             color: #fff;
         }
 
-        /* PROFESSIONAL UX STRIP LAYOUT */
-        .service-row {
+        /* Fiverr-like Gig Card Layout */
+        .services-grid-fiverr {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            width: 100%;
+        }
+
+        .fiverr-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+            position: relative;
+        }
+
+        .fiverr-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(0, 163, 255, 0.3);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 163, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .fiverr-card-cover {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16/10;
+            overflow: hidden;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: #000;
+        }
+
+        .fiverr-card-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .fiverr-card:hover .fiverr-card-cover img {
+            transform: scale(1.05);
+        }
+
+        .fiverr-card-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: rgba(10, 14, 23, 0.85);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            z-index: 2;
+        }
+
+        .fiverr-card-content {
+            padding: 16px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fiverr-card-author {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .avatar-sm {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--gradient-brand);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.75rem;
+            color: #fff;
+        }
+
+        .author-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .level-badge {
+            margin-left: auto;
+            background: rgba(6, 217, 160, 0.1);
+            color: var(--secondary);
+            font-size: 0.65rem;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .fiverr-card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.95);
+            line-height: 1.4;
+            margin-bottom: 10px;
+            height: 40px;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .fiverr-card:hover .fiverr-card-title {
+            color: var(--primary);
+        }
+
+        .fiverr-card-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+        }
+
+        .star-icon {
+            color: #FFD700;
+        }
+
+        .rating-value {
+            color: #fff;
+            font-weight: 700;
+        }
+
+        .rating-count {
+            color: var(--text-muted);
+        }
+
+        .fiverr-card-footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 12px;
+            margin-top: auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(255,255,255,0.015);
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 16px;
-            padding: 24px 32px;
-            margin-bottom: 16px;
-            transition: background 0.3s, border-color 0.3s;
         }
 
-        .service-row:hover {
-            background: rgba(255,255,255,0.03);
-            border-color: rgba(255,255,255,0.08);
-        }
-
-        .service-identity {
-            display: flex;
-            align-items: center;
-            gap: 24px;
-            flex: 0 0 320px;
-        }
-
-        .service-packages-container {
-            display: flex;
-            gap: 16px;
-            flex-grow: 1;
-        }
-
-        .package-tier {
-            flex: 1;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.03);
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            position: relative;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .package-tier:hover {
-            transform: translateY(-4px);
-            border-color: rgba(0, 163, 255, 0.3);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-        }
-
-        .package-tier.popular {
-            background: rgba(6, 217, 160, 0.05);
-            border-color: rgba(6, 217, 160, 0.3);
-        }
-
-        .tier-name {
-            font-size: 0.85rem;
+        .price-label {
+            font-size: 0.7rem;
             color: var(--text-muted);
-            font-weight: 700;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 8px;
-        }
-        
-        .package-tier.popular .tier-name {
-            color: var(--secondary);
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
-        .tier-price {
-            font-size: 1.4rem;
+        .price-value {
+            font-size: 1.05rem;
             font-weight: 800;
-            color: #fff;
-            margin-bottom: 16px;
-        }
-
-        .btn-select {
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            font-weight: 600;
-            font-size: 0.9rem;
-            padding: 10px 0;
-            width: 100%;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-select:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-        }
-
-        .package-tier.popular .btn-select {
-            background: var(--secondary);
-            color: #000;
-            border-color: var(--secondary);
+            color: var(--secondary);
         }
 
             /* Dynamic Compact Realignment Overrides (Desktop & Mobile) */
@@ -400,58 +470,53 @@
         categories.forEach(category => {
             catalogHtml += `
                 <div style="margin-bottom: 40px;">
-                    <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 16px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px;">${category.title}</h2>
+                    <h2 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 20px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 1px;">${category.title}</h2>
+                    <div class="services-grid-fiverr">
             `;
             
             category.services.forEach(service => {
                 if (service) {
-                    let packagesHtml = '';
-                    service.packages.forEach((pkg, index) => {
-                        const isPopular = index === 1;
-                        packagesHtml += `
-                            <div class="package-tier ${isPopular ? 'popular' : ''}">
-                                ${pkg.badge ? `<div style="position: absolute; top: -10px; background: #ff0055; color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 8px; border-radius: 10px; text-transform: uppercase;">${pkg.badge}</div>` : ''}
-                                <div class="tier-name">${pkg.title}</div>
-                                <div class="tier-price">${pkg.price}</div>
-                                <button class="btn-select" onclick="window.location.href='checkout.html?service=${service.id}&pkg=${index}'">
-                                    Start Project
-                                </button>
-                                <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 12px; font-weight: 500;">Delivery: ${pkg.delivery}</div>
-                            </div>
-                        `;
-                    });
-
+                    let imageUrl = '';
+                    if (service.id === 'ai-presenter') {
+                        imageUrl = 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=600&q=80';
+                    } else if (service.id === 'product-ads') {
+                        imageUrl = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80';
+                    } else if (service.id === 'cinematic-ads') {
+                        imageUrl = 'https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&w=600&q=80';
+                    } else if (service.id === 'static-posts') {
+                        imageUrl = 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=600&q=80';
+                    }
+                    
                     catalogHtml += `
-                        <div class="service-row">
-                            
-                            <div class="service-identity" style="flex: 0 0 350px;">
-                                <div style="font-size: 2.5rem;">${service.icon}</div>
-                                <div>
-                                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #fff; margin-bottom: 6px;">${service.name}</h3>
-                                    <p style="font-size: 0.8rem; color: rgba(255,255,255,0.7); line-height: 1.4; margin-bottom: 8px;">${service.description}</p>
-                                    
-                                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px; font-size: 0.8rem; font-weight: 600;">
-                                        <span style="color: #FFD700;">⭐ ${service.rating || '4.9'}</span>
-                                        <span style="color: var(--text-muted);">|</span>
-                                        <span style="color: var(--primary);">${service.orders || '10'} Orders</span>
-                                    </div>
-
-                                    <a href="service-details.html?id=${service.id}" style="color: var(--primary); font-size: 0.85rem; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; background: rgba(0, 163, 255, 0.1); border-radius: 6px;">
-                                        See Everything Included →
-                                    </a>
+                        <div class="fiverr-card" onclick="window.location.href='service-details.html?id=${service.id}'">
+                            <div class="fiverr-card-cover">
+                                <img src="${imageUrl}" alt="${service.name}">
+                                <div class="fiverr-card-badge">${service.icon}</div>
+                            </div>
+                            <div class="fiverr-card-content">
+                                <div class="fiverr-card-author">
+                                    <div class="avatar-sm">M</div>
+                                    <span class="author-name">MSMEgrowth</span>
+                                    <span class="level-badge">Top Rated</span>
+                                </div>
+                                <h3 class="fiverr-card-title">I will deliver elite ${service.name.toLowerCase()} for your brand</h3>
+                                <div class="fiverr-card-rating">
+                                    <span class="star-icon">★</span>
+                                    <span class="rating-value">${service.rating}</span>
+                                    <span class="rating-count">(${service.orders})</span>
+                                </div>
+                                <div class="fiverr-card-footer">
+                                    <span class="price-label">Starting At</span>
+                                    <span class="price-value">${service.startingPrice}</span>
                                 </div>
                             </div>
-
-                            <div class="service-packages-container">
-                                ${packagesHtml}
-                            </div>
-
                         </div>
                     `;
                 }
             });
-
+            
             catalogHtml += `
+                    </div>
                 </div>
             `;
         });
