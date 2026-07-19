@@ -610,6 +610,7 @@
             width: 250px !important;
         }
         .main-view {
+            margin-left: 250px !important;
             padding: 24px !important;
         }
         .top-bar {
@@ -760,9 +761,10 @@
 
             let tabsHtml = '';
             service.packages.forEach((pkg, index) => {
+                const tabLabel = pkg.badge ? `${pkg.title} (${pkg.badge})` : pkg.title;
                 tabsHtml += `
                     <button class="fiverr-tab ${index === activePkgIndex ? 'active' : ''}" onclick="switchFiverrTab(${index})">
-                        ${pkg.title}
+                        ${tabLabel}
                     </button>
                 `;
             });
@@ -810,30 +812,30 @@
             
             // Build Page Layout
             let html = `
-                <!-- 1. Sales Hero -->
-                <div class="sales-hero" style="padding-top: 40px; margin-bottom: 24px; text-align: left;">
-                    <div style="font-size: 3rem; margin-bottom: 16px;">${service.icon}</div>
-                    <h1 class="headline" style="max-width: 900px; margin: 0 0 16px 0;">${service.heroHeadline}</h1>
-                    <p class="subheadline" style="font-size: 1.1rem; text-align: left; margin: 0 0 24px 0;">${service.description}</p>
-                    
-                    <div class="benefits-list" style="justify-content: flex-start;">
-                        ${service.benefits.map(b => `
-                            <div class="benefit-item">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                ${b}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <!-- 2. Two-Column Layout -->
-                <div class="sales-layout-container">
+                <!-- Two-Column Layout Container -->
+                <div class="sales-layout-container" style="padding-top: 40px;">
                     
                     <!-- Left Column: Content -->
                     <div class="sales-left-col">
                         
+                        <!-- 1. Sales Hero inside left column -->
+                        <div class="sales-hero" style="padding: 0; margin-bottom: 32px; text-align: left;">
+                            <div style="font-size: 3rem; margin-bottom: 16px;">${service.icon}</div>
+                            <h1 class="headline" style="max-width: 100%; margin: 0 0 16px 0; justify-content: flex-start !important; text-align: left;">${service.heroHeadline}</h1>
+                            <p class="subheadline" style="font-size: 1.1rem; text-align: left; margin: 0 0 24px 0; max-width: 100%; padding: 0;">${service.description}</p>
+                            
+                            <div class="benefits-list" style="justify-content: flex-start; margin-bottom: 0;">
+                                ${service.benefits.map(b => `
+                                    <div class="benefit-item">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        ${b}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
                         <!-- Featured Showcase Video -->
-                        <div class="featured-video">
+                        <div class="featured-video" style="max-width: 100%; margin: 0 0 48px 0;">
                             <div style="text-align: center; color: rgba(255,255,255,0.8);">
                                 <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
                                 <h3 style="font-size: 1.5rem; font-weight: 700;">Watch The Showreel</h3>
@@ -858,7 +860,7 @@
                         <div style="margin-bottom: 48px;">
                             <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; text-align: left; color: #fff;">The Production Process</h2>
                             <p style="color: var(--text-muted); text-align: left; margin-bottom: 32px;">How we go from idea to highly-profitable asset.</p>
-                            <div class="timeline" style="margin: 0;">
+                            <div class="timeline" style="max-width: 100%; margin: 0 0 48px 0;">
                                 ${timelineSteps.map(t => `
                                     <div class="timeline-step">
                                         <div class="step-num">${t.step}</div>
@@ -914,7 +916,7 @@
                         <!-- FAQ -->
                         <div style="margin-bottom: 48px;">
                             <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 32px; text-align: left; color: #fff;">Frequently Asked Questions</h2>
-                            <div class="faq-container" style="max-width: 100%;">
+                            <div class="faq-container" style="max-width: 100%; margin: 0 0 48px 0;">
                                 ${service.faqs.map(f => `
                                     <div class="faq-item">
                                         <div class="faq-q">${f.q}</div>
