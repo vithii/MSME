@@ -101,14 +101,145 @@
             max-width: 800px;
         }
 
-        /* 3 TALL VERTICAL CARDS (The exact mockup layout) */
-        .packages-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            max-width: 1100px;
-            margin: 0 auto 40px auto;
-            padding: 0 24px;
+        /* Fiverr 2-Column Split & Sticky Sidebar Layout */
+        .sales-layout-container {
+            display: flex;
+            gap: 48px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+            align-items: flex-start;
+        }
+
+        .sales-left-col {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .sales-right-col {
+            width: 380px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 110px;
+            z-index: 10;
+        }
+
+        .fiverr-widget {
+            background: rgba(18, 18, 29, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            width: 100%;
+        }
+
+        .fiverr-tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .fiverr-tab {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 16px 12px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 3px solid transparent;
+        }
+
+        .fiverr-tab.active {
+            color: var(--primary);
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom-color: var(--primary);
+        }
+
+        .fiverr-widget-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            min-height: 280px;
+            box-sizing: border-box;
+        }
+
+        .fiverr-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .fiverr-price {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .fiverr-cost-per {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-weight: 700;
+        }
+
+        .fiverr-delivery-badge {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .fiverr-continue-btn {
+            background: var(--gradient-brand);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            margin-top: auto;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 163, 255, 0.2);
+        }
+
+        .fiverr-continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 163, 255, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .sales-layout-container {
+                flex-direction: column;
+                gap: 24px;
+                padding: 16px;
+            }
+            .sales-left-col {
+                width: 100%;
+            }
+            .sales-right-col {
+                width: 100%;
+                position: static;
+            }
         }
 
         .package-card {
@@ -622,48 +753,70 @@
             } else {
                 window.location.href = 'login.html';
             }
-        });
+        });        let activePkgIndex = 0;
+        function renderFiverrPackageWidget() {
+            const sidebarContainer = document.getElementById('fiverr-package-sidebar');
+            if (!sidebarContainer) return;
+
+            let tabsHtml = '';
+            service.packages.forEach((pkg, index) => {
+                tabsHtml += `
+                    <button class="fiverr-tab ${index === activePkgIndex ? 'active' : ''}" onclick="switchFiverrTab(${index})">
+                        ${pkg.title}
+                    </button>
+                `;
+            });
+
+            const pkg = service.packages[activePkgIndex];
+            
+            sidebarContainer.innerHTML = `
+                <div class="fiverr-widget">
+                    <div class="fiverr-tabs">
+                        ${tabsHtml}
+                    </div>
+                    <div class="fiverr-widget-body">
+                        ${pkg.badge ? `<div class="discount-badge" style="margin-bottom: 16px; display: inline-table; font-size: 0.7rem; background: var(--primary); color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: 700;">${pkg.badge} SAVINGS</div>` : ''}
+                        
+                        <div class="fiverr-price-row">
+                            <span class="fiverr-price">${pkg.price}</span>
+                            <span class="fiverr-cost-per">${pkg.costPer}</span>
+                        </div>
+                        
+                        <div class="fiverr-delivery-badge">
+                            ⚡ Delivered in ${pkg.delivery}
+                        </div>
+
+                        <div style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px;">
+                            Full service package including native voiceovers, HD production, standard licensing rights and rapid revision cycles.
+                        </div>
+
+                        <button class="fiverr-continue-btn" onclick="window.location.href='checkout.html?service=${service.id}&pkg=${activePkgIndex}'">
+                            Start My Project (${pkg.price})
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        window.switchFiverrTab = function(index) {
+            activePkgIndex = index;
+            renderFiverrPackageWidget();
+        };
 
         if (!service) {
             dynamicContainer.innerHTML = `<h1 style="text-align:center; padding: 100px; color: var(--text-muted); font-weight: 500;">Service not found.</h1>`;
             mainContent.style.display = 'block';
         } else {
             
-            // Build the 3 tall cards based on the packages array
-            let cardsHtml = '';
-            service.packages.forEach((pkg, index) => {
-                const isPopular = index === 1; // Middle package is the sweet spot
-                
-                cardsHtml += `
-                    <div class="package-card ${isPopular ? 'popular' : ''}">
-                        ${isPopular ? '<div class="popular-badge">Most Popular</div>' : ''}
-                        <h3 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 12px; color: ${isPopular ? 'var(--secondary)' : '#fff'}; text-align: center;">${pkg.title}</h3>
-                        ${pkg.badge ? `<div class="discount-badge" style="margin: 0 auto 12px auto; display: table;">${pkg.badge} SAVINGS</div>` : ''}
-                        
-                        <div class="package-price" style="font-size: 2.2rem; text-align: center;">${pkg.price}</div>
-                        <div style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600; margin-bottom: 32px; text-align: center;">⚡ Delivered in ${pkg.delivery}</div>
-
-                        <div style="margin-top: auto; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
-                            <span style="font-size: 1.1rem; font-weight: 900; color: #fff;">${pkg.costPer}</span>
-                        </div>
-
-                        <!-- BUY BUTTON RESTORED TO BOTTOM -->
-                        <button class="btn-sales ${isPopular ? 'secondary' : ''}" style="margin-top: 24px;" onclick="window.location.href='checkout.html?service=${service.id}&pkg=${index}'">
-                            Start My Project
-                        </button>
-                    </div>
-                `;
-            });
-
             // Build Page Layout
             let html = `
                 <!-- 1. Sales Hero -->
-                <div class="sales-hero" style="padding-top: 40px; margin-bottom: 24px;">
+                <div class="sales-hero" style="padding-top: 40px; margin-bottom: 24px; text-align: left;">
                     <div style="font-size: 3rem; margin-bottom: 16px;">${service.icon}</div>
-                    <h1 class="headline" style="max-width: 900px; margin: 0 auto 24px auto;">${service.heroHeadline}</h1>
-                    <p class="subheadline" style="font-size: 1.1rem;">${service.description}</p>
+                    <h1 class="headline" style="max-width: 900px; margin: 0 0 16px 0;">${service.heroHeadline}</h1>
+                    <p class="subheadline" style="font-size: 1.1rem; text-align: left; margin: 0 0 24px 0;">${service.description}</p>
                     
-                    <div class="benefits-list">
+                    <div class="benefits-list" style="justify-content: flex-start;">
                         ${service.benefits.map(b => `
                             <div class="benefit-item">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
@@ -673,151 +826,137 @@
                     </div>
                 </div>
 
-                <!-- 2. Social Proof Bar -->
-                <div class="social-proof-bar">
-                    <div class="stat-box">
-                        <div class="stat-num">45+</div>
-                        <div class="stat-label">Businesses Scaled</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-num">250+</div>
-                        <div class="stat-label">Assets Delivered</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-num">98%</div>
-                        <div class="stat-label">Client Satisfaction</div>
-                    </div>
-                </div>
-
-                <!-- 3. Featured Video Placeholder -->
-                <div class="featured-video" onclick="alert('Playing featured showcase...')">
-                    <div style="text-align: center; color: rgba(255,255,255,0.8);">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
-                        <h3 style="font-size: 1.5rem; font-weight: 700;">Watch The Showreel</h3>
-                        <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">Click to see real results generated for our clients.</p>
-                    </div>
-                </div>
-
-                <!-- 4. Pricing Grid -->
-                <div class="packages-grid">
-                    ${cardsHtml}
-                </div>
-
-                <!-- 5. Everything Included -->
-                <div style="max-width: 900px; margin: 0 auto 80px auto; text-align: center; padding: 0 24px;">
-                    <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 24px;">Everything Included In All Packages:</div>
-                    <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;">
-                        ${service.included.map(inc => `
-                            <span style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 8px 16px; font-size: 0.9rem; color: rgba(255,255,255,0.9); font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                                ${inc}
-                            </span>
-                        `).join('')}
-                    </div>
-                </div>
-
-                <!-- 6. How It Works -->
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px;">The Production Process</h2>
-                    <p style="color: var(--text-muted);">How we go from idea to highly-profitable asset.</p>
-                </div>
-                <div class="timeline">
-                    ${timelineSteps.map(t => `
-                        <div class="timeline-step">
-                            <div class="step-num">${t.step}</div>
-                            <div>
-                                <h4 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; color: #fff;">${t.title}</h4>
-                                <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem;">${t.desc}</p>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-
-                <!-- 7. Portfolio -->
-                <div class="portfolio-section" id="portfolio">
-                    <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 16px; text-align: center;">See Previous Works & Case Studies</h2>
-                    <p style="text-align: center; color: var(--text-muted); margin-bottom: 24px; font-size: 1.1rem;">Proof is in the profit. See how we've scaled brands exactly like yours.</p>
-                    <div class="portfolio-gallery">
-                        <div class="portfolio-item">Video Proof 1</div>
-                        <div class="portfolio-item">Before / After Proof</div>
-                        <div class="portfolio-item">Client ROI Case Study</div>
-                    </div>
-                </div>
-
-                <!-- 8. Testimonials -->
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px;">What Our Clients Say</h2>
-                </div>
-                <div class="testimonials">
-                    <div class="testimonial-card">
-                        <div class="stars">★★★★★</div>
-                        <p style="font-size: 1.05rem; color: rgba(255,255,255,0.9); line-height: 1.6; margin-bottom: 24px; font-style: italic;">"Absolutely incredible. They delivered the assets 2 days early and the quality completely blew our competitors out of the water. Our ad costs dropped by 40% immediately."</p>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 40px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.1);"></div>
-                            <div>
-                                <div style="font-weight: 700; font-size: 0.9rem;">David Chen</div>
-                                <div style="font-size: 0.8rem; color: var(--text-muted);">E-commerce Founder</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-card">
-                        <div class="stars">★★★★★</div>
-                        <p style="font-size: 1.05rem; color: rgba(255,255,255,0.9); line-height: 1.6; margin-bottom: 24px; font-style: italic;">"The level of professionalism is unmatched. You get a dedicated portal, live tracking, and the final delivery is flawless. Highly recommended."</p>
-                        <div style="display: flex; align-items: center; gap: 12px;">
-                            <div style="width: 40px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.1);"></div>
-                            <div>
-                                <div style="font-weight: 700; font-size: 0.9rem;">Sarah Jenkins</div>
-                                <div style="font-size: 0.8rem; color: var(--text-muted);">Marketing Director</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 9. FAQ -->
-                <div style="text-align: center; margin-bottom: 40px;">
-                    <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px;">Frequently Asked Questions</h2>
-                </div>
-                <div class="faq-container">
-                    ${service.faqs.map(f => `
-                        <div class="faq-item">
-                            <div class="faq-q">${f.q}</div>
-                            <div class="faq-a">${f.a}</div>
-                        </div>
-                    `).join('')}
-                </div>
-
-                <!-- 10. Guarantee -->
-                <div class="guarantee-box">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                    <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 24px; color: var(--secondary);">100% Iron-Clad Quality Guarantee</h2>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: left; max-width: 600px; margin: 0 auto;">
-                        <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Unlimited Minor Revisions</div>
-                        <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Dedicated Project Manager</div>
-                        <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Milestone Approvals</div>
-                        <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Secure File Delivery</div>
-                    </div>
-                </div>
-
-                <!-- 11. Final CTA -->
-                <div class="final-cta">
-                    <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(255,51,0,0.1); color: #ff3300; padding: 6px 16px; border-radius: 20px; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; margin-bottom: 24px; border: 1px solid rgba(255,51,0,0.2);">
-                        🔥 High Demand: Only 4 Production Slots Left This Week
-                    </div>
-                    <h2 style="font-size: 3rem; font-weight: 900; margin-bottom: 16px; color: #fff;">Ready to Scale?</h2>
-                    <p style="font-size: 1.1rem; color: var(--text-muted); max-width: 600px; margin: 0 auto 32px auto;">Select a package above and secure your slot before we reach full capacity.</p>
-                    <button class="btn-sales" style="max-width: 300px; padding: 20px 40px;" onclick="window.scrollTo({top: 500, behavior: 'smooth'})">Start My Project</button>
+                <!-- 2. Two-Column Layout -->
+                <div class="sales-layout-container">
                     
-                    <div style="margin-top: 48px; padding-top: 48px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; color: rgba(255,255,255,0.3); display: flex; justify-content: space-between; align-items: center;">
-                        <div>© MSMEgrowth. All rights reserved.</div>
-                        <div style="display: flex; gap: 24px;">
-                            <a href="#" style="color: inherit; text-decoration: none;">Terms of Service</a>
-                            <a href="#" style="color: inherit; text-decoration: none;">Privacy Policy</a>
-                            <a href="#" style="color: inherit; text-decoration: none;">Refund Policy</a>
+                    <!-- Left Column: Content -->
+                    <div class="sales-left-col">
+                        
+                        <!-- Featured Showcase Video -->
+                        <div class="featured-video">
+                            <div style="text-align: center; color: rgba(255,255,255,0.8);">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8"></polygon></svg>
+                                <h3 style="font-size: 1.5rem; font-weight: 700;">Watch The Showreel</h3>
+                                <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 8px;">Click to see real results generated for our clients.</p>
+                            </div>
                         </div>
+
+                        <!-- Everything Included -->
+                        <div style="margin: 48px 0; text-align: left;">
+                            <div style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 24px;">Everything Included In All Packages:</div>
+                            <div style="display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 12px;">
+                                ${service.included.map(inc => `
+                                    <span style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 30px; padding: 8px 16px; font-size: 0.9rem; color: rgba(255,255,255,0.9); font-weight: 500; display: inline-flex; align-items: center; gap: 8px;">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        ${inc}
+                                    </span>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- How It Works (Timeline) -->
+                        <div style="margin-bottom: 48px;">
+                            <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; text-align: left; color: #fff;">The Production Process</h2>
+                            <p style="color: var(--text-muted); text-align: left; margin-bottom: 32px;">How we go from idea to highly-profitable asset.</p>
+                            <div class="timeline" style="margin: 0;">
+                                ${timelineSteps.map(t => `
+                                    <div class="timeline-step">
+                                        <div class="step-num">${t.step}</div>
+                                        <div>
+                                            <h4 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 4px; color: #fff;">${t.title}</h4>
+                                            <p style="color: rgba(255,255,255,0.6); font-size: 0.95rem;">${t.desc}</p>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Portfolio / Gallery -->
+                        <div class="portfolio-section" id="portfolio" style="margin-bottom: 48px; padding: 0;">
+                            <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; text-align: left; color: #fff;">See Previous Works & Case Studies</h2>
+                            <p style="text-align: left; color: var(--text-muted); margin-bottom: 32px; font-size: 1.1rem;">Proof is in the profit. See how we've scaled brands exactly like yours.</p>
+                            <div class="portfolio-gallery">
+                                <div class="portfolio-item">Video Proof 1</div>
+                                <div class="portfolio-item">Before / After Proof</div>
+                                <div class="portfolio-item">Client ROI Case Study</div>
+                            </div>
+                        </div>
+
+                        <!-- Testimonials -->
+                        <div style="margin-bottom: 48px;">
+                            <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 32px; text-align: left; color: #fff;">What Our Clients Say</h2>
+                            <div class="testimonials" style="justify-content: flex-start; gap: 24px;">
+                                <div class="testimonial-card" style="margin: 0; flex: 1;">
+                                    <div class="stars">★★★★★</div>
+                                    <p style="font-size: 1.05rem; color: rgba(255,255,255,0.9); line-height: 1.6; margin-bottom: 24px; font-style: italic;">"Absolutely incredible. They delivered the assets 2 days early and the quality completely blew our competitors out of the water. Our ad costs dropped by 40% immediately."</p>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 40px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.1);"></div>
+                                        <div>
+                                            <div style="font-weight: 700; font-size: 0.9rem;">David Chen</div>
+                                            <div style="font-size: 0.8rem; color: var(--text-muted);">E-commerce Founder</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="testimonial-card" style="margin: 0; flex: 1;">
+                                    <div class="stars">★★★★★</div>
+                                    <p style="font-size: 1.05rem; color: rgba(255,255,255,0.9); line-height: 1.6; margin-bottom: 24px; font-style: italic;">"The level of professionalism is unmatched. You get a dedicated portal, live tracking, and the final delivery is flawless. Highly recommended."</p>
+                                    <div style="display: flex; align-items: center; gap: 12px;">
+                                        <div style="width: 40px; height: 40px; border-radius: 20px; background: rgba(255,255,255,0.1);"></div>
+                                        <div>
+                                            <div style="font-weight: 700; font-size: 0.9rem;">Sarah Jenkins</div>
+                                            <div style="font-size: 0.8rem; color: var(--text-muted);">Marketing Director</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FAQ -->
+                        <div style="margin-bottom: 48px;">
+                            <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 32px; text-align: left; color: #fff;">Frequently Asked Questions</h2>
+                            <div class="faq-container" style="max-width: 100%;">
+                                ${service.faqs.map(f => `
+                                    <div class="faq-item">
+                                        <div class="faq-q">${f.q}</div>
+                                        <div class="faq-a">${f.a}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Guarantee -->
+                        <div class="guarantee-box" style="text-align: left; margin: 0 0 48px 0; padding: 32px;">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 16px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 24px; color: var(--secondary);">100% Quality Guarantee</h2>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; text-align: left; max-width: 100%;">
+                                <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Unlimited Minor Revisions</div>
+                                <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Dedicated Project Manager</div>
+                                <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Milestone Approvals</div>
+                                <div style="display: flex; gap: 8px; font-weight: 600; color: #fff;"><span style="color: var(--secondary);">✓</span> Secure File Delivery</div>
+                            </div>
+                        </div>
+
+                        <!-- Final Footer elements -->
+                        <div style="padding-top: 48px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; color: rgba(255,255,255,0.3); display: flex; justify-content: space-between; align-items: center;">
+                            <div>© MSMEgrowth. All rights reserved.</div>
+                            <div style="display: flex; gap: 24px;">
+                                <a href="#" style="color: inherit; text-decoration: none;">Terms of Service</a>
+                                <a href="#" style="color: inherit; text-decoration: none;">Privacy Policy</a>
+                            </div>
+                        </div>
+
                     </div>
+
+                    <!-- Right Column: Fiverr Dynamic Package Widget -->
+                    <div class="sales-right-col" id="fiverr-package-sidebar">
+                        <!-- Rendered by JS function renderFiverrPackageWidget() -->
+                    </div>
+
                 </div>
             `;
+            
             dynamicContainer.innerHTML = html;
+            renderFiverrPackageWidget();
             mainContent.style.display = 'block';
 
             // Query configured videos from Firestore
