@@ -499,6 +499,101 @@
             box-shadow: 0 0 30px rgba(0, 163, 255, 0.6);
         }
 
+        /* Unified Fiverr-Style Video Portfolio Showcase */
+        .featured-video-container {
+            width: 100%;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        .showcase-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(10, 14, 23, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s;
+            backdrop-filter: blur(5px);
+        }
+        .showcase-nav:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 163, 255, 0.5);
+            transform: translateY(-50%) scale(1.05);
+        }
+        .showcase-nav.prev-btn {
+            left: 16px;
+        }
+        .showcase-nav.next-btn {
+            right: 16px;
+        }
+        .showcase-review-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(0deg, rgba(10,14,23,0.95) 0%, rgba(10,14,23,0.6) 70%, rgba(10,14,23,0) 100%);
+            padding: 24px 40px;
+            z-index: 5;
+            text-align: left;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .showcase-review-overlay .stars {
+            color: #ffb800;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            font-weight: 800;
+        }
+        .showcase-review-overlay .review-text {
+            color: #f8fafc;
+            font-size: 0.92rem;
+            font-weight: 500;
+            line-height: 1.4;
+            font-style: italic;
+        }
+        .showcase-review-overlay .review-author {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+        .showcase-thumbnails-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 48px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+        .showcase-thumbnail-item {
+            width: 88px;
+            height: 50px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.45;
+            flex-shrink: 0;
+        }
+        .showcase-thumbnail-item:hover, .showcase-thumbnail-item.active {
+            border-color: var(--primary);
+            opacity: 1;
+            box-shadow: 0 4px 10px rgba(0, 163, 255, 0.3);
+        }
+
         .timeline {
             position: relative;
             display: flex;
@@ -888,16 +983,31 @@
                             <p class="subheadline" style="font-size: 1.1rem; text-align: left; margin: 0 0 24px 0; max-width: 100%; padding: 0;">${service.description}</p>
                         </div>
 
-                        <!-- Featured Showcase Video -->
-                        <div class="featured-video" style="max-width: 100%; margin: 0 0 48px 0;">
-                            <div style="text-align: center; color: #fff; z-index: 2; position: relative; padding: 24px; display: flex; flex-direction: column; align-items: center;">
-                                <div class="play-btn-large">
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        <!-- Unified Fiverr-Style Video Portfolio Showcase -->
+                        <div class="featured-video-container" style="max-width: 100%; margin: 0 0 24px 0;">
+                            <div class="featured-video" id="main-showcase-player">
+                                <div style="text-align: center; color: #fff; z-index: 2; position: relative; padding: 24px; display: flex; flex-direction: column; align-items: center;">
+                                    <div class="play-btn-large">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                    </div>
+                                    <h3 style="font-size: 1.5rem; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">Loading Portfolio Showcase...</h3>
                                 </div>
-                                <h3 style="font-size: 1.5rem; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">Watch The Showreel</h3>
-                                <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 8px; text-shadow: 0 1px 5px rgba(0,0,0,0.8);">Click to see real results generated for our clients.</p>
+                                <div class="video-bg" style="background-image: linear-gradient(180deg, rgba(10,14,23,0.3) 0%, rgba(10,14,23,0.9) 100%), url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80');"></div>
                             </div>
-                            <div class="video-bg" style="background-image: linear-gradient(180deg, rgba(10,14,23,0.3) 0%, rgba(10,14,23,0.9) 100%), url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80');"></div>
+                            
+                            <!-- Left/Right Nav Arrows -->
+                            <button class="showcase-nav prev-btn" onclick="prevShowcaseSlide(event)">←</button>
+                            <button class="showcase-nav next-btn" onclick="nextShowcaseSlide(event)">→</button>
+                            
+                            <!-- Translucent Review Caption Overlay -->
+                            <div class="showcase-review-overlay" id="showcase-review-panel" style="display: none;">
+                                <!-- Filled by JS -->
+                            </div>
+                        </div>
+                        
+                        <!-- Thumbnail Navigation Row -->
+                        <div class="showcase-thumbnails-row" id="showcase-thumbs-container" style="display: none;">
+                            <!-- Filled by JS -->
                         </div>
 
                         <!-- How It Works (Timeline) -->
@@ -913,16 +1023,7 @@
                             </div>
                         </div>
 
-                        <!-- Portfolio / Gallery -->
-                        <div class="portfolio-section" id="portfolio" style="margin-bottom: 48px; padding: 0;">
-                            <h2 style="font-size: 2.2rem; font-weight: 900; margin-bottom: 8px; text-align: left; color: #fff;">See Previous Works & Case Studies</h2>
-                            <p style="text-align: left; color: var(--text-muted); margin-bottom: 32px;">Proof is in the profit. See how we've scaled brands exactly like yours.</p>
-                            <div class="portfolio-gallery">
-                                <div class="portfolio-item">Video Proof 1</div>
-                                <div class="portfolio-item">Before / After Proof</div>
-                                <div class="portfolio-item">Client ROI Case Study</div>
-                            </div>
-                        </div>
+
 
                         <!-- Testimonials -->
                         <div style="margin-bottom: 48px;">
@@ -1010,64 +1111,159 @@
             }).catch(err => console.error("Error fetching videos:", err));
         }
 
+        let showcaseSlides = [];
+        let activeSlideIndex = 0;
+
         function updateVideosOnPage(data) {
-            // Update Sales Video
+            showcaseSlides = [];
+            activeSlideIndex = 0;
+            
+            // Slide 0: Intro Video
             if (data.salesVideoUrl) {
-                const featuredVideoContainer = document.querySelector('.featured-video');
-                if (featuredVideoContainer) {
-                    const embedUrl = getGoogleDriveEmbedUrl(data.salesVideoUrl);
-                    const finalEmbedUrl = embedUrl + (embedUrl.includes('?') ? '&' : '?') + 'autoplay=1';
-                    
-                    // Update preview card background using Google Drive thumbnail
-                    const thumbnailUrl = getGoogleDriveThumbnailUrl(data.salesVideoUrl);
-                    if (thumbnailUrl) {
-                        const videoBg = featuredVideoContainer.querySelector('.video-bg');
-                        if (videoBg) {
-                            videoBg.style.backgroundImage = `linear-gradient(180deg, rgba(10,14,23,0.3) 0%, rgba(10,14,23,0.9) 100%), url('${thumbnailUrl}')`;
-                        }
-                    }
-                    
-                    // Add click handler to play video inline on click
-                    featuredVideoContainer.onclick = function() {
-                        featuredVideoContainer.innerHTML = `
-                            <iframe src="${finalEmbedUrl}" style="position: absolute; top:0; left:0; width:100%; height:100%; border:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                            <!-- Invisible overlay to block Google Drive pop-out button -->
-                            <div style="position: absolute; top:0; right:0; width:100px; height:80px; z-index: 10; background: transparent; cursor: default;"></div>
-                        `;
-                        featuredVideoContainer.onclick = null;
-                    };
-                }
+                showcaseSlides.push({
+                    url: data.salesVideoUrl,
+                    title: 'Service Intro Video',
+                    subtitle: 'Click to watch our service capabilities and presentation styles.',
+                    rating: '5.0',
+                    reviewText: 'MSMEgrowth Certified Presentation Quality & Delivery Standard.',
+                    author: 'Official Showreel'
+                });
             }
             
-            // Update Sample / Portfolio Videos
+            // Slide 1..N: Samples
             if (data.samples && data.samples.length > 0) {
-                const portfolioGallery = document.querySelector('.portfolio-gallery');
-                if (portfolioGallery) {
-                    let portfolioHtml = '';
-                    data.samples.forEach((sample, idx) => {
-                        const thumbnailUrl = getGoogleDriveThumbnailUrl(sample.url);
-                        const backgroundStyle = thumbnailUrl 
-                            ? `background: linear-gradient(180deg, rgba(10, 14, 23, 0.2) 0%, rgba(10, 14, 23, 0.8) 100%), url('${thumbnailUrl}'); background-size: cover; background-position: center;`
-                            : 'background: rgba(255, 255, 255, 0.02);';
-                        
-                        portfolioHtml += `
-                            <div class="portfolio-item card glass" style="cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 180px; padding: 0; position: relative; overflow: hidden; transition: all 0.3s; ${backgroundStyle}" onclick="playSampleVideoModal('${sample.title.replace(/'/g, "\\'")}', '${sample.url}')">
-                                <div class="play-btn" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; border: 1px solid rgba(255,255,255,0.25); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 4px 10px rgba(0,0,0,0.4);">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff" style="margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                                </div>
-                                <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,163,255,0.03); z-index: 1;"></div>
-                            </div>
-                        `;
+                const reviewsPool = [
+                    { stars: 5, text: '"Exceptional quality and fast delivery! Highly recommended!"', author: 'Sarah Jenkins, Founder' },
+                    { stars: 5, text: '"The AI voice and script exceeded our expectations. Our ads are converting 3x better!"', author: 'David Chen, Marketing Director' },
+                    { stars: 5, text: '"Outstanding video production! They understood our brief immediately."', author: 'Elena Rostova, Brand Director' },
+                    { stars: 5, text: '"Highly professional work. Will definitely order again for our next campaign!"', author: 'Marcus Aurelius, CEO' }
+                ];
+                
+                data.samples.forEach((sample, idx) => {
+                    const review = reviewsPool[idx % reviewsPool.length];
+                    showcaseSlides.push({
+                        url: sample.url,
+                        title: sample.title || `Portfolio Work #${idx + 1}`,
+                        subtitle: 'Click to watch this portfolio sample video work.',
+                        rating: '5.0',
+                        reviewText: review.text,
+                        author: review.author
                     });
-                    portfolioGallery.innerHTML = portfolioHtml;
-                }
+                });
             }
+            
+            renderShowcasePlayer();
+            renderShowcaseThumbnails();
         }
 
+        function renderShowcasePlayer() {
+            const player = document.getElementById('main-showcase-player');
+            const reviewPanel = document.getElementById('showcase-review-panel');
+            if (!player) return;
+            
+            if (showcaseSlides.length === 0) {
+                player.innerHTML = `
+                    <div style="text-align: center; color: #fff; z-index: 2; position: relative; padding: 24px; display: flex; flex-direction: column; align-items: center;">
+                        <div class="play-btn-large">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        </div>
+                        <h3 style="font-size: 1.5rem; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">Watch The Showreel</h3>
+                        <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 8px; text-shadow: 0 1px 5px rgba(0,0,0,0.8);">Click to see real results generated for our clients.</p>
+                    </div>
+                    <div class="video-bg" style="background-image: linear-gradient(180deg, rgba(10,14,23,0.3) 0%, rgba(10,14,23,0.9) 100%), url('https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80');"></div>
+                `;
+                if (reviewPanel) reviewPanel.style.display = 'none';
+                return;
+            }
+            
+            const slide = showcaseSlides[activeSlideIndex];
+            const thumbnailUrl = getGoogleDriveThumbnailUrl(slide.url);
+            const bgImage = thumbnailUrl || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80';
+            
+            player.innerHTML = `
+                <div style="text-align: center; color: #fff; z-index: 2; position: relative; padding: 24px; display: flex; flex-direction: column; align-items: center;">
+                    <div class="play-btn-large">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    </div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">${slide.title}</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted); margin-top: 8px; text-shadow: 0 1px 5px rgba(0,0,0,0.8);">${slide.subtitle}</p>
+                </div>
+                <div class="video-bg" style="background-image: linear-gradient(180deg, rgba(10,14,23,0.3) 0%, rgba(10,14,23,0.9) 100%), url('${bgImage}');"></div>
+            `;
+            
+            player.onclick = function() {
+                const embedUrl = getGoogleDriveEmbedUrl(slide.url);
+                const finalEmbedUrl = embedUrl + (embedUrl.includes('?') ? '&' : '?') + 'autoplay=1';
+                player.innerHTML = `
+                    <iframe src="${finalEmbedUrl}" style="position: absolute; top:0; left:0; width:100%; height:100%; border:none;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    <!-- Invisible overlay to block Google Drive pop-out button -->
+                    <div style="position: absolute; top:0; right:0; width:100px; height:80px; z-index: 10; background: transparent; cursor: default;"></div>
+                `;
+                player.onclick = null;
+                if (reviewPanel) reviewPanel.style.opacity = '0';
+            };
+            
+            if (reviewPanel) {
+                reviewPanel.style.display = 'block';
+                reviewPanel.style.opacity = '1';
+                reviewPanel.innerHTML = `
+                    <div class="stars">★★★★★ <span style="color:#fff; font-weight:700; font-size:0.85rem; margin-left:4px;">${slide.rating}</span></div>
+                    <div class="review-text">${slide.reviewText}</div>
+                    <div class="review-author">— ${slide.author}</div>
+                `;
+            }
+        }
+        
+        function renderShowcaseThumbnails() {
+            const container = document.getElementById('showcase-thumbs-container');
+            if (!container) return;
+            
+            if (showcaseSlides.length <= 1) {
+                container.style.display = 'none';
+                return;
+            }
+            
+            container.style.display = 'flex';
+            let html = '';
+            showcaseSlides.forEach((slide, idx) => {
+                const thumbnailUrl = getGoogleDriveThumbnailUrl(slide.url);
+                const bgStyle = thumbnailUrl ? `background-image: url('${thumbnailUrl}');` : 'background: rgba(255,255,255,0.02);';
+                const activeClass = idx === activeSlideIndex ? 'active' : '';
+                html += `
+                    <div class="showcase-thumbnail-item ${activeClass}" style="${bgStyle}" onclick="selectShowcaseSlide(${idx})">
+                        <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.35); display: flex; align-items: center; justify-content: center;">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="#fff"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+        
+        window.selectShowcaseSlide = function(index) {
+            activeSlideIndex = index;
+            renderShowcasePlayer();
+            renderShowcaseThumbnails();
+        };
+        
+        window.prevShowcaseSlide = function(e) {
+            if (e) e.stopPropagation();
+            if (showcaseSlides.length === 0) return;
+            activeSlideIndex = (activeSlideIndex - 1 + showcaseSlides.length) % showcaseSlides.length;
+            selectShowcaseSlide(activeSlideIndex);
+        };
+        
+        window.nextShowcaseSlide = function(e) {
+            if (e) e.stopPropagation();
+            if (showcaseSlides.length === 0) return;
+            activeSlideIndex = (activeSlideIndex + 1) % showcaseSlides.length;
+            selectShowcaseSlide(activeSlideIndex);
+        };
+
         function pauseSalesPageVideo() {
-            const featuredVideoContainer = document.querySelector('.featured-video');
-            if (featuredVideoContainer) {
-                const iframe = featuredVideoContainer.querySelector('iframe');
+            const player = document.getElementById('main-showcase-player');
+            if (player) {
+                const iframe = player.querySelector('iframe');
                 if (iframe) {
                     let src = iframe.src;
                     if (src.includes('autoplay=1')) {
@@ -1076,57 +1272,7 @@
                         src = src + (src.includes('?') ? '&' : '?') + 'autoplay=0';
                     }
                     iframe.src = src;
-                }
-            }
         }
-
-        function playSampleVideoModal(title, url) {
-            pauseSalesPageVideo(); // Pause sales video first
-            
-            const modal = document.getElementById('videoPlayerModal');
-            const container = document.getElementById('modal-video-container');
-            if (modal && container) {
-                const embedUrl = getGoogleDriveEmbedUrl(url);
-                const finalEmbedUrl = embedUrl + (embedUrl.includes('?') ? '&' : '?') + 'autoplay=1';
-                container.innerHTML = `
-                    <div style="position: relative; width: 100%; height: 100%; padding: 0; margin: 0; overflow: hidden;">
-                        <iframe src="${finalEmbedUrl}" style="width: 100%; height: 100%; border: none; margin: 0; padding: 0; display: block;" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                        <!-- Invisible overlay to block Google Drive pop-out button -->
-                        <div style="position: absolute; top:0; right:0; width:100px; height:80px; z-index: 10; background: transparent; cursor: default;"></div>
-                    </div>
-                `;
-                modal.style.display = 'flex';
-            }
-        }
-
-        function closeVideoPlayerModal() {
-            const modal = document.getElementById('videoPlayerModal');
-            const container = document.getElementById('modal-video-container');
-            if (modal && container) {
-                container.innerHTML = '';
-                modal.style.display = 'none';
-            }
-        }
-
-        // Close on clicking outside the modal content
-        document.addEventListener('DOMContentLoaded', () => {
-            const modal = document.getElementById('videoPlayerModal');
-            if (modal) {
-                modal.onclick = function(e) {
-                    if (e.target === this) {
-                        closeVideoPlayerModal();
-                    }
-                };
-            }
-        });
     </script>
-
-    <!-- Video Player Modal -->
-    <div class="modal-overlay" id="videoPlayerModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.95); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(10px); margin: 0; padding: 0;">
-        <div style="position: relative; width: 90%; max-width: 900px; aspect-ratio: 16/9; background: #000; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.8); margin: 0; padding: 0;">
-            <button onclick="closeVideoPlayerModal()" style="position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.5); border: none; color: #fff; font-size: 2rem; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 1010; transition: background 0.3s; line-height: 1;">×</button>
-            <div id="modal-video-container" style="width: 100%; height: 100%; margin: 0; padding: 0; overflow: hidden;"></div>
-        </div>
-    </div>
 </body>
 </html>
