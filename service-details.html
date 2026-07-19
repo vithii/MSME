@@ -701,11 +701,12 @@
             
             <div class="top-bar" style="padding: 16px 48px;">
                 <a href="services.html" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-color: rgba(255,255,255,0.1); color: var(--text-muted);">← Back</a>
-                <div class="user-profile">
+                <div class="user-profile" style="display: flex; align-items: center; gap: 12px;">
                     <div style="text-align: right;">
-                        <div style="font-weight: 600; font-size: 0.85rem;" id="profile-name">Client Name</div>
+                        <div style="font-weight: 600; font-size: 0.95rem; color: #fff;" id="profile-name">Client Name</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted);">Client Account</div>
                     </div>
-                    <div class="avatar" id="profile-avatar" style="width: 32px; height: 32px; font-size: 0.85rem;">C</div>
+                    <div id="profile-avatar" style="width: 40px; height: 40px; border-radius: 50%; background: var(--gradient-brand); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,163,255,0.25);">C</div>
                 </div>
             </div>
 
@@ -771,6 +772,17 @@
 
             const pkg = service.packages[activePkgIndex];
             
+            // Calculate dynamic slash price comparison
+            const basePriceText = service.packages[0].price;
+            const basePriceNum = parseFloat(basePriceText.replace(/[^0-9]/g, ''));
+            const baseQty = parseInt(service.packages[0].title) || 1;
+            const basePricePerUnit = basePriceNum / baseQty;
+
+            const qty = parseInt(pkg.title) || 1;
+            const originalPriceNum = Math.round(basePricePerUnit * qty);
+            const originalPriceFormatted = "LKR " + originalPriceNum.toLocaleString();
+            const showDiscount = activePkgIndex > 0;
+            
             sidebarContainer.innerHTML = `
                 <div class="fiverr-widget">
                     <div class="fiverr-tabs">
@@ -780,7 +792,10 @@
                         ${pkg.badge ? `<div class="discount-badge" style="margin-bottom: 16px; display: inline-table; font-size: 0.7rem; background: var(--primary); color: #fff; padding: 4px 8px; border-radius: 4px; font-weight: 700;">${pkg.badge} SAVINGS</div>` : ''}
                         
                         <div class="fiverr-price-row">
-                            <span class="fiverr-price">${pkg.price}</span>
+                            <div>
+                                ${showDiscount ? `<span style="font-size: 1.15rem; text-decoration: line-through; color: rgba(255,255,255,0.4); font-weight: 600; margin-right: 8px;">${originalPriceFormatted}</span>` : ''}
+                                <span class="fiverr-price" style="color: var(--secondary) !important;">${pkg.price}</span>
+                            </div>
                             <span class="fiverr-cost-per">${pkg.costPer}</span>
                         </div>
                         
@@ -820,7 +835,6 @@
                         
                         <!-- 1. Sales Hero inside left column -->
                         <div class="sales-hero" style="padding: 0; margin-bottom: 32px; text-align: left;">
-                            <div style="font-size: 3rem; margin-bottom: 16px;">${service.icon}</div>
                             <h1 class="headline" style="max-width: 100%; margin: 0 0 16px 0; justify-content: flex-start !important; text-align: left;">${service.heroHeadline}</h1>
                             <p class="subheadline" style="font-size: 1.1rem; text-align: left; margin: 0 0 24px 0; max-width: 100%; padding: 0;">${service.description}</p>
                             
