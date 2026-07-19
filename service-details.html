@@ -442,17 +442,21 @@
         .benefits-list {
             display: flex;
             justify-content: center;
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 24px;
             flex-wrap: wrap;
         }
         .benefit-item {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 1.1rem;
-            font-weight: 700;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
             color: #fff;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 10px 20px;
+            border-radius: 30px;
+            margin-top: 24px;
         }
         
         .social-proof-bar {
@@ -838,7 +842,7 @@
                             <div class="benefits-list" style="justify-content: flex-start; margin-bottom: 0;">
                                 ${service.benefits.map(b => `
                                     <div class="benefit-item">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--secondary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
                                         ${b}
                                     </div>
                                 `).join('')}
