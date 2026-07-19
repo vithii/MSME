@@ -271,24 +271,13 @@
             position: relative;
             overflow: hidden;
         }
-        
-        .portfolio-item::after {
-            content: '▶ PLAY SHOWREEL';
-            position: absolute;
-            background: rgba(0,0,0,0.6);
-            backdrop-filter: blur(5px);
-            padding: 12px 24px;
-            border-radius: 30px;
-            color: white;
-            font-size: 0.8rem;
-            letter-spacing: 2px;
-            opacity: 0;
-            transition: 0.3s ease;
+        .portfolio-item:hover .play-btn {
+            transform: translate(-50%, -50%) scale(1.15);
+            background: var(--primary) !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 0 20px rgba(0, 163, 255, 0.6);
         }
-        
-        .portfolio-item:hover::after {
-            opacity: 1;
-        }
+
 
         .guarantee-box {
             background: rgba(6, 217, 160, 0.05);
@@ -867,15 +856,15 @@
                     data.samples.forEach((sample, idx) => {
                         const thumbnailUrl = getGoogleDriveThumbnailUrl(sample.url);
                         const backgroundStyle = thumbnailUrl 
-                            ? `background: linear-gradient(180deg, rgba(10, 14, 23, 0.4) 0%, rgba(10, 14, 23, 0.95) 100%), url('${thumbnailUrl}'); background-size: cover; background-position: center;`
+                            ? `background: linear-gradient(180deg, rgba(10, 14, 23, 0.2) 0%, rgba(10, 14, 23, 0.8) 100%), url('${thumbnailUrl}'); background-size: cover; background-position: center;`
                             : 'background: rgba(255, 255, 255, 0.02);';
                         
                         portfolioHtml += `
-                            <div class="portfolio-item card glass" style="cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 180px; padding: 24px; position: relative; overflow: hidden; transition: all 0.3s; ${backgroundStyle}" onclick="playSampleVideoModal('${sample.title.replace(/'/g, "\\'")}', '${sample.url}')">
-                                <div style="font-size: 2.5rem; margin-bottom: 12px; z-index: 2; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));">🎬</div>
-                                <h4 style="font-size: 1.1rem; font-weight: 700; color: #fff; z-index: 2; text-shadow: 0 2px 4px rgba(0,0,0,0.8);">${sample.title || `Sample Video ${idx + 1}`}</h4>
-                                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; z-index: 2; text-shadow: 0 1px 2px rgba(0,0,0,0.8);">Click to Watch</p>
-                                <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,163,255,0.05); z-index: 1;"></div>
+                            <div class="portfolio-item card glass" style="cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; min-height: 180px; padding: 0; position: relative; overflow: hidden; transition: all 0.3s; ${backgroundStyle}" onclick="playSampleVideoModal('${sample.title.replace(/'/g, "\\'")}', '${sample.url}')">
+                                <div class="play-btn" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 50px; height: 50px; background: rgba(0,0,0,0.5); border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 2; border: 1px solid rgba(255,255,255,0.25); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 4px 10px rgba(0,0,0,0.4);">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff" style="margin-left: 2px;"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                </div>
+                                <div style="position: absolute; top:0; left:0; width:100%; height:100%; background: rgba(0,163,255,0.03); z-index: 1;"></div>
                             </div>
                         `;
                     });
@@ -889,7 +878,13 @@
             if (featuredVideoContainer) {
                 const iframe = featuredVideoContainer.querySelector('iframe');
                 if (iframe) {
-                    iframe.src = iframe.src;
+                    let src = iframe.src;
+                    if (src.includes('autoplay=1')) {
+                        src = src.replace('autoplay=1', 'autoplay=0');
+                    } else if (!src.includes('autoplay=')) {
+                        src = src + (src.includes('?') ? '&' : '?') + 'autoplay=0';
+                    }
+                    iframe.src = src;
                 }
             }
         }
