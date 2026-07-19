@@ -368,12 +368,12 @@
                 <div style="display: flex; gap: 16px; align-items: center;">
                     <div style="display: flex; gap: 24px;">
                         <div style="text-align: center;">
-                            <div style="font-size: 1.2rem; font-weight: 800; color: #fff;">0</div>
+                            <div style="font-size: 1.2rem; font-weight: 800; color: #fff;" id="active-orders-count">0</div>
                             <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Active Orders</div>
                         </div>
                         <div style="text-align: center;">
-                            <div style="font-size: 1.2rem; font-weight: 800; color: var(--secondary);">0</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Credits</div>
+                            <div style="font-size: 1.2rem; font-weight: 800; color: var(--secondary);" id="courses-count">0</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">Courses</div>
                         </div>
                     </div>
                     
@@ -425,6 +425,27 @@
                             if(welcomeTitle) welcomeTitle.innerHTML = `Welcome back, <span style="color: var(--primary);">${firstName}</span> 👋`;
                         }
                     }
+
+                    // Dynamically calculate counts of Active Orders and Enrolled Courses
+                    firebase.firestore().collection('orders').where('clientId', '==', user.uid).get().then(snapshot => {
+                        let activeOrders = 0;
+                        let courses = 0;
+                        snapshot.forEach(doc => {
+                            const data = doc.data();
+                            if (data.itemType === 'course') {
+                                courses++;
+                            } else {
+                                if (data.status !== 'Completed') {
+                                    activeOrders++;
+                                }
+                            }
+                        });
+                        const activeOrdersEl = document.getElementById('active-orders-count');
+                        const coursesEl = document.getElementById('courses-count');
+                        if (activeOrdersEl) activeOrdersEl.innerText = activeOrders;
+                        if (coursesEl) coursesEl.innerText = courses;
+                    }).catch(err => console.error("Error counting orders:", err));
+
                 } catch (error) {
                     console.error("Error fetching user data:", error);
                 }
@@ -494,16 +515,12 @@
                                 <div class="fiverr-card-badge">${service.icon}</div>
                             </div>
                             <div class="fiverr-card-content">
-                                <div class="fiverr-card-author">
-                                    <div class="avatar-sm">M</div>
-                                    <span class="author-name">MSMEgrowth</span>
-                                    <span class="level-badge">Top Rated</span>
-                                </div>
-                                <h3 class="fiverr-card-title">I will deliver elite ${service.name.toLowerCase()} for your brand</h3>
+                                <h3 class="fiverr-card-title" style="font-size: 1.05rem; font-weight: 700; height: auto; margin-bottom: 6px;">${service.name}</h3>
+                                <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 12px; height: 36px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">${service.description}</p>
                                 <div class="fiverr-card-rating">
                                     <span class="star-icon">★</span>
                                     <span class="rating-value">${service.rating}</span>
-                                    <span class="rating-count">(${service.orders})</span>
+                                    <span class="rating-count">(${service.orders} Orders)</span>
                                 </div>
                                 <div class="fiverr-card-footer">
                                     <span class="price-label">Starting At</span>
